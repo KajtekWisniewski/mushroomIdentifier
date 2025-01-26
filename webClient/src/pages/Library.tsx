@@ -1,3 +1,9 @@
+import MushroomList from '../components/Library/MushroomList';
+
 export default function Library() {
-  return <div>Biblioteka</div>;
+  return (
+    <div>
+      <MushroomList />
+    </div>
+  );
 }
