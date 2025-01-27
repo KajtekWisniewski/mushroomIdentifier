@@ -7,6 +7,7 @@ import {
   MushroomCategory
 } from '../contracts/mushroom/mushroom';
 import { Link } from 'react-router-dom';
+import SaveRecognition from '../components/Home/SaveRecogniton';
 
 const fetchMushroomCategories = async (): Promise<CategoriesDTO> => {
   const { data } = await httpClient.get<CategoriesDTO>('/api/mushrooms/mock');
@@ -106,8 +107,10 @@ export default function Home() {
               </Link>
             );
           })}
+          <SaveRecognition />
         </div>
       )}
+
       <ImageUpload onImageCapture={onImageCapture} />
     </div>
   );
