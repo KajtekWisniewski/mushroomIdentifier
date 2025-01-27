@@ -1,4 +1,3 @@
-// components/MushroomEntry.tsx
 import { MushroomDTO, MushroomCategory } from '../../../contracts/mushroom/mushroom';
 import MushroomImageCarousel from './sub-entries/MushroomImageCarousel';
 import clsx from 'clsx';

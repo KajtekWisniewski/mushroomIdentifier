@@ -1,4 +1,4 @@
-import { Link, useLocation } from 'react-router-dom'; // Import useLocation to track the current route
+import { Link, useLocation } from 'react-router-dom';
 import { MushroomCategory } from '../../../contracts/mushroom/mushroom';
 
 export default function CategoryTabs() {
