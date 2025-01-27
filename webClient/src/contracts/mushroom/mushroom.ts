@@ -16,6 +16,15 @@ export interface Coordinates {
   longitude: number;
 }
 
+export interface MushroomPrediction {
+  category: string;
+  confidence: string;
+}
+
+export interface CategoriesDTO {
+  predictions: MushroomPrediction[];
+}
+
 export interface MushroomDTO {
   id: number;
   name: string;

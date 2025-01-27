@@ -1,8 +1,8 @@
 import { useQuery } from '@tanstack/react-query';
-import httpClient from '../../utils/httpClient';
-import { MushroomDTO } from '../../contracts/mushroom/mushroom';
+import httpClient from '../../../utils/httpClient';
+import { MushroomDTO } from '../../../contracts/mushroom/mushroom';
 
-export const useMushrooms = () => {
+export const useMushroomsList = () => {
   return useQuery<MushroomDTO[]>({
     queryKey: ['mushrooms'],
     queryFn: async () => {
