@@ -1,25 +1,24 @@
-import { Suspense } from 'react';
-import { useMushrooms } from '../Hooks/useMushrooms';
+import { useMushroomsList } from '../hooks/data-fetch/useMushroomList';
+import { Link } from 'react-router-dom';
+import MushroomEntry from './Entry/MushroomEntry';
 
 export default function MushroomList() {
-  const { data: mushrooms, isLoading, error } = useMushrooms();
+  const { data: mushrooms, isLoading, error } = useMushroomsList();
 
   if (isLoading) return <div>Loading...</div>;
   if (error) return <div>{(error as Error).message}</div>;
 
   return (
-    <div>
-      <Suspense>
-        {mushrooms?.map((mushroom) => (
-          <div key={mushroom.id}>
-            <div>{mushroom.commonNames[0]}</div>
-            <div>{mushroom.category}</div>
-            {mushroom.imageUrls.map((url, index) => (
-              <img key={index} src={url} alt={mushroom.name} />
-            ))}
-          </div>
-        ))}
-      </Suspense>
+    <div className="flex flex-col items-center gap-2">
+      {isLoading ? (
+        <div>Loading...</div>
+      ) : (
+        mushrooms?.map((mushroom) => (
+          <Link to={`/mushroom/${mushroom.id}`} key={mushroom.id}>
+            <MushroomEntry mushroom={mushroom} id={mushroom.id} listView />
+          </Link>
+        ))
+      )}
     </div>
   );
 }

@@ -4,6 +4,7 @@ using mushroomAPI.DTOs;
 using mushroomAPI.Entities;
 using mushroomAPI.Services.IServices;
 using Microsoft.EntityFrameworkCore;
+using AutoMapper;
 
 namespace mushroomAPI.Controllers
 {
@@ -13,16 +14,26 @@ namespace mushroomAPI.Controllers
     {
         private readonly IAuthService _authService;
         private readonly ApplicationDbContext _context;
+        private readonly IMapper _mapper;
 
-        public AuthController(IAuthService authService, ApplicationDbContext context)
+        public AuthController(IAuthService authService, ApplicationDbContext context, IMapper mapper)
         {
             _authService = authService;
             _context = context;
+            _mapper = mapper;
         }
 
         [HttpPost("register")]
         public async Task<ActionResult<UserProfileDTO>> Register(UserDTO request)
         {
+            var existingUser = await _context.Users
+                .FirstOrDefaultAsync(u => u.Username == request.Username || u.Email == request.Email);
+
+            if (existingUser != null)
+            {
+                return Conflict(new { message = "A user with the same username or email already exists." });
+            }
+
             _authService.CreatePasswordHash(request.Password,
                 out byte[] passwordHash,
                 out byte[] passwordSalt);
@@ -38,15 +49,14 @@ namespace mushroomAPI.Controllers
             _context.Users.Add(user);
             await _context.SaveChangesAsync();
 
-            return CreatedAtAction(nameof(Register), new
-            {
-                username = user.Username,
-                email = user.Email
-            });
+            var userProfileDTO = _mapper.Map<UserProfileDTO>(user);
+
+            return CreatedAtAction(nameof(Register), userProfileDTO);
         }
 
+
         [HttpPost("login")]
-        public async Task<ActionResult<string>> Login(UserLoginDTO request)
+        public async Task<ActionResult<LoginResponseDTO>> Login(UserLoginDTO request)
         {
             var user = await _context.Users
                 .FirstOrDefaultAsync(u => u.Username == request.Username);
@@ -59,7 +69,17 @@ namespace mushroomAPI.Controllers
                 user.PasswordSalt))
                 return BadRequest("Wrong password.");
 
-            return Ok(_authService.CreateToken(user));
+            var token = _authService.CreateToken(user);
+
+            var userProfileDTO = _mapper.Map<UserProfileDTO>(user);
+
+            var loginResponse = new LoginResponseDTO
+            {
+                Token = token,
+                User = userProfileDTO
+            };
+
+            return Ok(loginResponse);
         }
     }
 }

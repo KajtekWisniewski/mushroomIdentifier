@@ -1,0 +1,24 @@
+import { MushroomCategory } from '../mushroom/mushroom';
+
+export interface UserProfileDTO {
+  username: string;
+  email: string;
+  isAdmin: boolean;
+  savedRecognitions: MushroomCategory[];
+}
+
+export interface UserLoginDTO {
+  username: string;
+  password: string;
+}
+
+export interface UserDTO {
+  username: string;
+  email: string;
+  password: string;
+}
+
+export interface LoginResponseDTO {
+  token: string;
+  user: UserProfileDTO;
+}
