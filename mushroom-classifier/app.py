@@ -3,11 +3,17 @@ import tensorflow as tf
 from keras.preprocessing.image import load_img, img_to_array
 import numpy as np
 import os
+from flask_cors import CORS
 
 app = Flask(__name__)
+CORS(app)
+#CORS(app, resources={r"/*": {"origins": "*", "allow_headers": "*", "methods": ["GET", "POST", "PUT", "DELETE", "OPTIONS"]}})
 
+# local path
+MODEL_PATH = "../aimodels/mushroom_classifier_model.h5"
 
-MODEL_PATH = "aiModels/mushroom_classifier_model.h5"
+# docker path
+# MODEL_PATH = "/app/aimodels/mushroom_classifier_model.h5"
 model = tf.keras.models.load_model(MODEL_PATH)
 
 

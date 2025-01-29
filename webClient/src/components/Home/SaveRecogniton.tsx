@@ -31,21 +31,33 @@ export default function SaveRecognition({ predictions, enable }: SaveRecognition
     }
   });
 
+  const convertCategoryToEnum = (
+    category: string | MushroomCategory
+  ): MushroomCategory => {
+    if (typeof category === 'number') {
+      return category as MushroomCategory;
+    }
+    return MushroomCategory[category as keyof typeof MushroomCategory];
+  };
+
   const handleSave = () => {
     if (!predictions) {
       setError('No predictions to save');
       return;
     }
 
-    const recognitionsData: SaveRecognitionDTO = {
-      predictions: predictions.map((pred) => ({
-        category: Number(pred.category) as MushroomCategory,
-        confidence: pred.confidence,
-        savedAt: new Date().toISOString()
-      }))
-    };
-
-    saveMutation.mutate(recognitionsData);
+    try {
+      const recognitionsData: SaveRecognitionDTO = {
+        predictions: predictions.map((pred) => ({
+          category: convertCategoryToEnum(pred.category),
+          confidence: pred.confidence,
+          savedAt: new Date().toISOString()
+        }))
+      };
+      saveMutation.mutate(recognitionsData);
+    } catch (err) {
+      setError('Error converting prediction categories');
+    }
   };
 
   if (!user || !predictions) return null;
@@ -61,9 +73,7 @@ export default function SaveRecognition({ predictions, enable }: SaveRecognition
       >
         {saveMutation.isPending ? 'Saving...' : 'Save Recognition'}
       </button>
-
       {error && <div className="text-red-500 mt-2">{error}</div>}
-
       {saveMutation.isSuccess && (
         <div className="text-green-500 mt-2">Recognition saved successfully!</div>
       )}

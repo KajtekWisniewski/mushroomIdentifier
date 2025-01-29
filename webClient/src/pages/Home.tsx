@@ -2,7 +2,7 @@ import ImageUpload from '../components/Home/ImageUpload';
 import { useMutation } from '@tanstack/react-query';
 import httpClient from '../utils/httpClient';
 import {
-  CategoriesDTO,
+  // CategoriesDTO,
   MushroomPrediction,
   MushroomCategory
 } from '../contracts/mushroom/mushroom';
@@ -10,50 +10,65 @@ import { Link } from 'react-router-dom';
 import SaveRecognition from '../components/Home/SaveRecogniton';
 import { ArrowRight } from 'lucide-react';
 
-const fetchMushroomCategories = async (): Promise<CategoriesDTO> => {
-  const { data } = await httpClient.get<CategoriesDTO>('/api/mushrooms/mock');
-  return data;
-};
+// mock data endpoint
+// const fetchMushroomCategories = async (): Promise<CategoriesDTO> => {
+//   const { data } = await httpClient.get<CategoriesDTO>('/api/mushrooms/mock');
+//   return data;
+// };
 
 export default function Home() {
-  // commented out section will be used for actual image upload
-
-  // const uploadMutation = useMutation({
-  //   mutationFn: async (file: File) => {
-  //     const formData = new FormData();
-  //     formData.append('image', file);
-  //     const response = await httpClient.post('/api/upload', formData, {
-  //       headers: {
-  //         'Content-Type': 'multipart/form-data'
-  //       }
-  //     });
-  //     return response.data;
-  //   },
-  //   onSuccess: (data) => {
-  //     console.log('Upload successful:', data);
-  //   },
-  //   onError: (error) => {
-  //     console.error('Upload failed:', error);
-  //   }
-  // });
-
-  const { mutateAsync, isPending, error, data } = useMutation<
-    CategoriesDTO,
-    Error,
-    void
-  >({
-    mutationFn: fetchMushroomCategories
+  // ai model post request section
+  const uploadMutation = useMutation({
+    mutationFn: async (file: File) => {
+      const formData = new FormData();
+      formData.append('image', file);
+      const response = await httpClient.post(
+        'http://localhost:5000/predict',
+        formData,
+        {
+          headers: {
+            'Content-Type': 'multipart/form-data'
+          },
+          baseURL: ''
+        }
+      );
+      return response.data;
+    },
+    onSuccess: (data) => {
+      console.log('Upload successful:', data);
+    },
+    onError: (error) => {
+      console.error('Upload failed:', error);
+    }
   });
 
-  // const onImageCapture = async (file: File) => {
-  const onImageCapture = async () => {
+  const onImageCapture = async (file: File) => {
     try {
-      const data = await mutateAsync();
+      const data = await uploadMutation.mutateAsync(file);
       return data;
     } catch (error) {
       console.error('Error in onImageCapture:', error);
     }
   };
+
+  // mock data section
+
+  // const { mutateAsync, isPending, error, data } = useMutation<
+  //   CategoriesDTO,
+  //   Error,
+  //   void
+  // >({
+  //   mutationFn: fetchMushroomCategories
+  // });
+
+  // const onImageCapture = async () => {
+  //   try {
+  //     const data = await mutateAsync();
+  //     return data;
+  //   } catch (error) {
+  //     console.error('Error in onImageCapture:', error);
+  //   }
+  // };
 
   const getCategoryEnumValue = (categoryId: number | string): MushroomCategory => {
     if (typeof categoryId === 'number' || !isNaN(Number(categoryId))) {
@@ -63,9 +78,12 @@ export default function Home() {
     return MushroomCategory[categoryId as keyof typeof MushroomCategory];
   };
 
+  const { data } = uploadMutation;
+
   return (
+    // ai model section
     <div className="container mx-auto px-4">
-      {/* {uploadMutation.isPending && (
+      {uploadMutation.isPending && (
         <div className="text-center text-blue-500 my-2">Uploading image...</div>
       )}
       {uploadMutation.isError && (
@@ -75,15 +93,16 @@ export default function Home() {
       )}
       {uploadMutation.isSuccess && (
         <div className="text-center text-green-500 my-2">Upload successful!</div>
-      )} */}
-      {isPending && (
+      )}
+      {/* mock section */}
+      {/* {isPending && (
         <div className="text-center text-blue-500 my-2">Loading data...</div>
       )}
       {error && (
         <div className="text-center text-red-500 my-2">
           Failed to fetch data: {error.message}
         </div>
-      )}
+      )} */}
       {data && (
         <div className="flex flex-col gap-4 mt-6 items-center">
           {data.predictions.map((prediction: MushroomPrediction) => {
