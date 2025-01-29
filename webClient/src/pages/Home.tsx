@@ -54,12 +54,12 @@ export default function Home() {
     }
   };
 
-  const getCategoryEnumValue = (categoryName: string): MushroomCategory => {
-    const normalizedName =
-      categoryName.charAt(0).toUpperCase() + categoryName.slice(1).toLowerCase();
-    return MushroomCategory[
-      normalizedName as keyof typeof MushroomCategory
-    ] as MushroomCategory;
+  const getCategoryEnumValue = (categoryId: number | string): MushroomCategory => {
+    if (typeof categoryId === 'number' || !isNaN(Number(categoryId))) {
+      return Number(categoryId) as MushroomCategory;
+    }
+
+    return MushroomCategory[categoryId as keyof typeof MushroomCategory];
   };
 
   return (
@@ -87,6 +87,7 @@ export default function Home() {
         <div className="flex flex-col gap-4 mt-6 items-center">
           {data.predictions.map((prediction: MushroomPrediction, index: number) => {
             const categoryId = getCategoryEnumValue(prediction.category);
+            const categoryName = MushroomCategory[categoryId];
             return (
               <Link
                 key={index}
@@ -94,9 +95,7 @@ export default function Home() {
                 className="flex flex-row gap-4 p-4 border rounded-lg hover:bg-gray-50 transition-colors"
               >
                 <div className="flex justify-between gap-4 items-center">
-                  <span className="text-lg font-medium capitalize">
-                    {prediction.category}
-                  </span>
+                  <span className="text-lg font-medium capitalize">{categoryName}</span>
                   <div className="flex items-center gap-4">
                     <span className="text-gray-600">
                       Confidence: {prediction.confidence}%
@@ -107,7 +106,7 @@ export default function Home() {
               </Link>
             );
           })}
-          <SaveRecognition />
+          <SaveRecognition predictions={data.predictions} />
         </div>
       )}
 

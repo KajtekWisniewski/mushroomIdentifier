@@ -1,10 +1,11 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using mushroomAPI.Data;
-using mushroomAPI.DTOs;
 using mushroomAPI.Entities;
 using mushroomAPI.Services.IServices;
 using Microsoft.EntityFrameworkCore;
 using AutoMapper;
+using mushroomAPI.DTOs.Auth;
+using mushroomAPI.DTOs.User;
 
 namespace mushroomAPI.Controllers
 {

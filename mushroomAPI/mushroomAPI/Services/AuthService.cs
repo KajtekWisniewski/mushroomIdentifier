@@ -21,6 +21,7 @@ namespace mushroomAPI.Services
         {
             var claims = new List<Claim>
             {
+                new(ClaimTypes.NameIdentifier, user.Id.ToString()),  // Add this line
                 new(ClaimTypes.Name, user.Username),
                 new(ClaimTypes.Email, user.Email),
                 new(ClaimTypes.Role, user.IsAdmin ? "Admin" : "User")

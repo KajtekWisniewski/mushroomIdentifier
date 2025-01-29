@@ -1,7 +1,8 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using mushroomAPI.DTOs;
+using mushroomAPI.DTOs.Mushroom.Entries;
+using mushroomAPI.DTOs.Mushroom.Predictions;
 using mushroomAPI.Entities;
 using mushroomAPI.Repository.Contracts;
 
@@ -89,10 +90,10 @@ namespace mushroomAPI.Controllers
             var categories = Enum.GetValues<MushroomCategory>()
                 .OrderBy(x => random.Next())
                 .Take(5)
-                .Select(cat => new
+                .Select(cat => new RecognitionDTO
                 {
-                    category = cat.ToString(),
-                    confidence = $"{random.NextDouble() * 100:0.00}%"
+                    Category = cat,
+                    Confidence = $"{random.NextDouble() * 100:0.00}%"
                 })
                 .ToList();
 

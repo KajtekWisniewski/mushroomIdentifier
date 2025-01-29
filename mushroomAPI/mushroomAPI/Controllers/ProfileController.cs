@@ -1,11 +1,12 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using mushroomAPI.DTOs;
 using mushroomAPI.Entities;
 using mushroomAPI.Repository.Contracts;
 using System.Security.Claims;
 using Microsoft.EntityFrameworkCore;
+using mushroomAPI.DTOs.User;
+using mushroomAPI.DTOs.Mushroom.Predictions;
 
 namespace mushroomAPI.Controllers
 {
@@ -50,20 +51,54 @@ namespace mushroomAPI.Controllers
         }
 
         [Authorize]
-        [HttpPut("recognitions")]
-        public async Task<ActionResult> UpdateRecognitions(UserRecognitionsDTO recognitionsDto)
+        [HttpGet("recognitions")]
+        public async Task<ActionResult<UserRecognitionsDTO>> GetUserRecognitions()
         {
             var userIdClaim = User.FindFirstValue(ClaimTypes.NameIdentifier);
             if (userIdClaim == null) return Unauthorized();
 
             var userId = int.Parse(userIdClaim);
-            if (userId != recognitionsDto.UserId) return Forbid();
-
             var user = await _userRepository.GetById(userId);
             if (user == null) return NotFound();
 
-            user.SavedRecognitions = recognitionsDto.SavedRecognitions;
+            var recognitionsDto = new UserRecognitionsDTO
+            {
+                UserId = userId,
+                SavedRecognitions = user.SavedRecognitions.Select(r => new RecognitionDTO
+                {
+                    Category = r.Category,
+                    Confidence = r.Confidence,
+                    SavedAt = r.SavedAt
+                }).ToList()
+            };
+
+            return Ok(recognitionsDto);
+        }
+
+        [Authorize]
+        [HttpPost("recognitions")]
+        public async Task<ActionResult> SaveRecognitions(SaveRecognitionDTO recognitionDto)
+        {
+            var userIdClaim = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            if (userIdClaim == null) return Unauthorized();
+
+            var userId = int.Parse(userIdClaim);
+            var user = await _userRepository.GetById(userId);
+            if (user == null) return NotFound();
+
+            var newRecognitions = recognitionDto.Predictions
+                .OrderByDescending(p => double.Parse(p.Confidence.TrimEnd('%')))
+                .Select(p => new Recognition
+                {
+                    Category = p.Category,
+                    Confidence = p.Confidence,
+                    SavedAt = DateTime.UtcNow
+                })
+                .ToList();
+
+            user.SavedRecognitions.AddRange(newRecognitions);
             _userRepository.Update(user);
+
             return await _userRepository.SafeChangesAsync() ? NoContent() : BadRequest();
         }
     }

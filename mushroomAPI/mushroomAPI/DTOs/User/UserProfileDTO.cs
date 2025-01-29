@@ -1,12 +1,13 @@
-﻿using mushroomAPI.Entities;
+﻿using mushroomAPI.DTOs.Mushroom.Predictions;
+using mushroomAPI.Entities;
 
-namespace mushroomAPI.DTOs
+namespace mushroomAPI.DTOs.User
 {
     public class UserProfileDTO
     {
         public string Username { get; init; } = "";
         public string Email { get; init; } = "";
         public bool IsAdmin { get; init; }
-        public List<MushroomCategory> SavedRecognitions { get; init; } = new List<MushroomCategory>();
+        public List<RecognitionDTO> SavedRecognitions { get; init; } = new();
     }
 }

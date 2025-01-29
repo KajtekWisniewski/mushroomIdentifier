@@ -1,6 +1,7 @@
 import { useParams } from 'react-router-dom';
 import { useMushroom } from '../components/hooks/data-fetch/useMushroom';
 import MushroomEntry from '../components/Library/Entry/MushroomEntry';
+import Forum from '../components/Forum/Forum';
 
 export default function MushroomDetail() {
   const { id } = useParams();
@@ -18,7 +19,9 @@ export default function MushroomDetail() {
           fake map component
         </div>
       </div>
-      <div className="flex m-4 h-[400px] bg-beige-400 rounded-2xl p-4">fake forum</div>
+      <div className="flex m-4 h-[400px] bg-beige-400 rounded-2xl p-4">
+        <Forum mushroomName={mushroom.name} mushroomId={mushroom.id} />
+      </div>
     </div>
   );
 }

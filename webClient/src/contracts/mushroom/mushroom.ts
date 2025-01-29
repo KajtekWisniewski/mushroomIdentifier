@@ -39,3 +39,17 @@ export interface MushroomDTO {
   locations: Coordinates[];
   lastUpdated: Date;
 }
+
+export interface UpsertMushroomDTO {
+  name: string;
+  scientificName: string;
+  category: MushroomCategory;
+  description: string;
+  isEdible: boolean;
+  habitat: string;
+  season: string;
+  commonNames: string[];
+  imageUrls: string[];
+  locations: Coordinates[];
+  lastUpdated: string;
+}
