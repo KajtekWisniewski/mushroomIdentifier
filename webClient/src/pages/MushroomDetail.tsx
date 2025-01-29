@@ -19,7 +19,7 @@ export default function MushroomDetail() {
           fake map component
         </div>
       </div>
-      <div className="flex m-4 h-[400px] bg-beige-400 rounded-2xl p-4">
+      <div className="flex m-4 bg-beige-400 rounded-2xl p-4">
         <Forum mushroomName={mushroom.name} mushroomId={mushroom.id} />
       </div>
     </div>

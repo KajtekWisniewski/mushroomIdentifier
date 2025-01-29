@@ -2,6 +2,7 @@
 using AutoMapper.QueryableExtensions;
 using Microsoft.EntityFrameworkCore;
 using mushroomAPI.Data;
+using mushroomAPI.DTOs;
 using mushroomAPI.Entities;
 using mushroomAPI.Repository.Contracts;
 
@@ -18,22 +19,52 @@ namespace mushroomAPI.Repository
             _mapper = mapper;
         }
 
-        public async Task<IEnumerable<T>> GetAllByMushroomId<T>(int mushroomId)
+        public async Task<PagedList<T>> GetAllByMushroomIdPaginated<T>(int mushroomId, int page, int pageSize)
         {
-            return await _context.ForumPosts
+            var query = _context.ForumPosts
                 .Where(p => p.MushroomId == mushroomId)
-                .OrderByDescending(p => p.CreatedAt)
+                .OrderByDescending(p => p.CreatedAt);
+
+            var total = await query.CountAsync();
+
+            var items = await query
+                .Skip((page - 1) * pageSize)
+                .Take(pageSize)
                 .ProjectTo<T>(_mapper.ConfigurationProvider)
                 .ToListAsync();
+
+            return new PagedList<T>
+            {
+                Items = items,
+                CurrentPage = page,
+                PageSize = pageSize,
+                TotalCount = total,
+                TotalPages = (int)Math.Ceiling(total / (double)pageSize)
+            };
         }
 
-        public async Task<IEnumerable<T>> GetAllByUserId<T>(int userId)
+        public async Task<PagedList<T>> GetAllByUserIdPaginated<T>(int userId, int page, int pageSize)
         {
-            return await _context.ForumPosts
+            var query = _context.ForumPosts
                 .Where(p => p.UserId == userId)
-                .OrderByDescending(p => p.CreatedAt)
+                .OrderByDescending(p => p.CreatedAt);
+
+            var total = await query.CountAsync();
+
+            var items = await query
+                .Skip((page - 1) * pageSize)
+                .Take(pageSize)
                 .ProjectTo<T>(_mapper.ConfigurationProvider)
                 .ToListAsync();
+
+            return new PagedList<T>
+            {
+                Items = items,
+                CurrentPage = page,
+                PageSize = pageSize,
+                TotalCount = total,
+                TotalPages = (int)Math.Ceiling(total / (double)pageSize)
+            };
         }
 
         public async Task<ForumPost?> GetById(int id)

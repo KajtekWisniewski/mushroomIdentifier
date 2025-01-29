@@ -8,6 +8,7 @@ import {
 } from '../contracts/mushroom/mushroom';
 import { Link } from 'react-router-dom';
 import SaveRecognition from '../components/Home/SaveRecogniton';
+import { ArrowRight } from 'lucide-react';
 
 const fetchMushroomCategories = async (): Promise<CategoriesDTO> => {
   const { data } = await httpClient.get<CategoriesDTO>('/api/mushrooms/mock');
@@ -85,32 +86,38 @@ export default function Home() {
       )}
       {data && (
         <div className="flex flex-col gap-4 mt-6 items-center">
-          {data.predictions.map((prediction: MushroomPrediction, index: number) => {
+          {data.predictions.map((prediction: MushroomPrediction) => {
             const categoryId = getCategoryEnumValue(prediction.category);
             const categoryName = MushroomCategory[categoryId];
             return (
-              <Link
-                key={index}
-                to={`/library/category/${categoryId.toString()}`}
-                className="flex flex-row gap-4 p-4 border rounded-lg hover:bg-gray-50 transition-colors"
-              >
-                <div className="flex justify-between gap-4 items-center">
-                  <span className="text-lg font-medium capitalize">{categoryName}</span>
-                  <div className="flex items-center gap-4">
-                    <span className="text-gray-600">
-                      Confidence: {prediction.confidence}%
-                    </span>
-                    <span className="text-blue-500">→</span>
+              <div className="w-[40%]" key={`prediction-${prediction.category}`}>
+                <Link
+                  to={`/library/category/${categoryId.toString()}`}
+                  className="flex flex-row p-4 border rounded-lg hover:bg-primary-700 transition-colors w-full hover:scale-101"
+                >
+                  <div className="flex justify-between w-full items-center">
+                    <div className="flex justify-between gap-4 items-center">
+                      <span className="text-lg font-medium capitalize">
+                        {categoryName}
+                      </span>
+                      <div className="flex items-center gap-4">
+                        <span className="text-gray-600">
+                          Confidence: {prediction.confidence}
+                        </span>
+                      </div>
+                    </div>
+                    <ArrowRight />
                   </div>
-                </div>
-              </Link>
+                </Link>
+              </div>
             );
           })}
           <SaveRecognition predictions={data.predictions} />
         </div>
       )}
-
-      <ImageUpload onImageCapture={onImageCapture} />
+      <div className="flex flex-col items-center justify-center">
+        <ImageUpload onImageCapture={onImageCapture} />
+      </div>
     </div>
   );
 }

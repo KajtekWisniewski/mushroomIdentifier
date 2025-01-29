@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using mushroomAPI.DTOs;
 using mushroomAPI.DTOs.Mushroom.Entries;
 using mushroomAPI.DTOs.Mushroom.Predictions;
 using mushroomAPI.Entities;
@@ -19,10 +20,13 @@ namespace mushroomAPI.Controllers
             _repository = repository;
             _mapper = mapper;
         }
+
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<MushroomDTO>>> GetAllMushrooms()
+        public async Task<ActionResult<PagedList<MushroomDTO>>> GetAllMushrooms(
+            [FromQuery] int page = 1,
+            [FromQuery] int pageSize = 10)
         {
-            return Ok(await _repository.GetAll<MushroomDTO>());
+            return Ok(await _repository.GetPaginated<MushroomDTO>(page, pageSize));
         }
 
         [HttpGet("{id}")]
@@ -33,10 +37,12 @@ namespace mushroomAPI.Controllers
         }
 
         [HttpGet("category/{category}")]
-        public async Task<ActionResult<IEnumerable<MushroomDTO>>> GetMushroomsByCategory(MushroomCategory category)
+        public async Task<ActionResult<PagedList<MushroomDTO>>> GetMushroomsByCategory(
+            MushroomCategory category,
+            [FromQuery] int page = 1,
+            [FromQuery] int pageSize = 10)
         {
-            var mushrooms = await _repository.GetAll<MushroomDTO>();
-            return Ok(mushrooms.Where(m => m.Category == category));
+            return Ok(await _repository.GetPaginatedByCategory<MushroomDTO>(category, page, pageSize));
         }
 
         [Authorize(Roles = "Admin")]

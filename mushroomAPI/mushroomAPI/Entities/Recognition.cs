@@ -5,5 +5,6 @@
         public MushroomCategory Category { get; set; }
         public string Confidence { get; set; } = "";
         public DateTime SavedAt { get; set; }
+        public string BatchId { get; set; } = "";
     }
 }

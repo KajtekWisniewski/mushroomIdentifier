@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using mushroomAPI.DTOs;
 using mushroomAPI.DTOs.Forum;
 using mushroomAPI.Entities;
 using mushroomAPI.Repository.Contracts;
@@ -8,7 +9,7 @@ using System.Security.Claims;
 
 namespace mushroomAPI.Controllers
 {
-    [ApiController]
+  [ApiController]
 [Route("api/forum")]
 public class ForumController : ControllerBase
 {
@@ -21,19 +22,25 @@ public class ForumController : ControllerBase
         _mapper = mapper;
     }
 
-    [HttpGet("mushroom/{mushroomId}")]
-    public async Task<ActionResult<IEnumerable<ForumPostDTO>>> GetPostsByMushroom(int mushroomId)
-    {
-        return Ok(await _repository.GetAllByMushroomId<ForumPostDTO>(mushroomId));
-    }
+        [HttpGet("mushroom/{mushroomId}")]
+        public async Task<ActionResult<PagedList<ForumPostDTO>>> GetPostsByMushroom(
+               int mushroomId,
+               [FromQuery] int page = 1,
+               [FromQuery] int pageSize = 10)
+        {
+            return Ok(await _repository.GetAllByMushroomIdPaginated<ForumPostDTO>(mushroomId, page, pageSize));
+        }
 
-    [HttpGet("user/{userId}")]
-    public async Task<ActionResult<IEnumerable<ForumPostDTO>>> GetPostsByUser(int userId)
-    {
-        return Ok(await _repository.GetAllByUserId<ForumPostDTO>(userId));
-    }
+        [HttpGet("user/{userId}")]
+        public async Task<ActionResult<PagedList<ForumPostDTO>>> GetPostsByUser(
+            int userId,
+            [FromQuery] int page = 1,
+            [FromQuery] int pageSize = 10)
+        {
+            return Ok(await _repository.GetAllByUserIdPaginated<ForumPostDTO>(userId, page, pageSize));
+        }
 
-    [Authorize]
+        [Authorize]
     [HttpPost]
     public async Task<ActionResult<ForumPostDTO>> CreatePost(CreateForumPostDTO postDto)
     {

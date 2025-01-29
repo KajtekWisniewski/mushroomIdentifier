@@ -6,6 +6,12 @@ export interface RecognitionDTO {
   savedAt: string;
 }
 
+export interface RecognitionBatchDTO {
+  batchId: string;
+  savedAt: string;
+  predictions: RecognitionDTO[];
+}
+
 export interface UserRecognitionsDTO {
   userId: number;
   savedRecognitions: RecognitionDTO[];

@@ -1,18 +1,28 @@
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { useInfiniteQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import httpClient from '../../../utils/httpClient';
-import { CreateForumPostDTO, ForumPostDTO } from '../../../contracts/forum/forum';
+import { ForumPostDTO, CreateForumPostDTO } from '../../../contracts/forum/forum';
+import { PagedList } from '../../../contracts/pagination/pagination';
 
 export const useForumPosts = (mushroomId: number) => {
   const queryClient = useQueryClient();
 
-  const posts = useQuery({
+  const posts = useInfiniteQuery<PagedList<ForumPostDTO>>({
     queryKey: ['forum-posts', mushroomId],
-    queryFn: async () => {
-      const { data } = await httpClient.get<ForumPostDTO[]>(
-        `/api/forum/mushroom/${mushroomId}`
+    queryFn: async ({ pageParam = 1 }) => {
+      const { data } = await httpClient.get<PagedList<ForumPostDTO>>(
+        `/api/forum/mushroom/${mushroomId}`,
+        {
+          params: {
+            page: pageParam,
+            pageSize: 10
+          }
+        }
       );
       return data;
-    }
+    },
+    getNextPageParam: (lastPage) =>
+      lastPage.hasNextPage ? lastPage.currentPage + 1 : undefined,
+    initialPageParam: 1
   });
 
   const createPost = useMutation({

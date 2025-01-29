@@ -1,10 +1,12 @@
-﻿using mushroomAPI.Entities;
+﻿using mushroomAPI.DTOs;
+using mushroomAPI.Entities;
 
 namespace mushroomAPI.Repository.Contracts
 {
     public interface IMushroomRepository
     {
-        Task<IEnumerable<T>> GetAll<T>();
+        Task<PagedList<T>> GetPaginated<T>(int page, int pageSize);
+        Task<PagedList<T>> GetPaginatedByCategory<T>(MushroomCategory category, int page, int pageSize);
         Task<Mushroom?> GetById(int id);
         Task<T?> GetById<T>(int id);
         void Add(Mushroom mushroom);

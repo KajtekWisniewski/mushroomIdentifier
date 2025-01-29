@@ -9,9 +9,10 @@ import { MushroomCategory } from '../../contracts/mushroom/mushroom';
 
 interface SaveRecognitionProps {
   predictions?: MushroomPrediction[];
+  enable?: boolean;
 }
 
-export default function SaveRecognition({ predictions }: SaveRecognitionProps) {
+export default function SaveRecognition({ predictions, enable }: SaveRecognitionProps) {
   const { user } = useSelector((state: RootState) => state.auth);
   const [error, setError] = useState<string | null>(null);
   const queryClient = useQueryClient();
@@ -49,12 +50,14 @@ export default function SaveRecognition({ predictions }: SaveRecognitionProps) {
 
   if (!user || !predictions) return null;
 
+  const disableButton = saveMutation.isSuccess || enable;
+
   return (
     <div className="mt-4">
       <button
         onClick={handleSave}
-        disabled={saveMutation.isPending}
-        className="px-4 py-2 bg-primary-800 text-white rounded hover:bg-primary-900 disabled:opacity-50"
+        disabled={saveMutation.isPending || disableButton}
+        className="px-4 py-2 bg-primary-800 rounded hover:bg-primary-900 disabled:opacity-50 disabled:!cursor-not-allowed disabled:hover:!opacity-50"
       >
         {saveMutation.isPending ? 'Saving...' : 'Save Recognition'}
       </button>

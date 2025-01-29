@@ -9,6 +9,7 @@ using mushroomAPI.Data;
 using mushroomAPI.Services.IServices;
 using mushroomAPI.Services;
 using Microsoft.OpenApi.Models;
+using mushroomAPI.Extensions;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -82,13 +83,14 @@ if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
     app.UseSwaggerUI();
+    await app.SeedDatabaseAsync(minimumCount: 5, numberToAdd: 100);
 }
 
 app.UseHttpsRedirection();
 app.UseCors(options =>
     options.AllowAnyHeader()
            .AllowAnyMethod()
-           .WithOrigins("http://localhost:3000", "http://localhost:5173"));
+           .AllowAnyOrigin());
 
 app.UseAuthentication();
 app.UseAuthorization();
