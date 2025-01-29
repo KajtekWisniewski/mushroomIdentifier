@@ -9,11 +9,24 @@ namespace mushroomAPI.Data
     {
         public DbSet<Mushroom> Mushrooms { get; init; } = null!;
         public DbSet<User> Users { get; init; } = null!;
+        public DbSet<ForumPost> ForumPosts { get; init; } = null!;
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             var fixedDate = new DateTime(2024, 1, 1, 0, 0, 0, DateTimeKind.Utc);
             var jsonOptions = new JsonSerializerOptions();
+
+            modelBuilder.Entity<ForumPost>()
+                .HasOne(fp => fp.Mushroom)
+                .WithMany()
+                .HasForeignKey(fp => fp.MushroomId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            modelBuilder.Entity<ForumPost>()
+                .HasOne(fp => fp.User)
+                .WithMany()
+                .HasForeignKey(fp => fp.UserId)
+                .OnDelete(DeleteBehavior.Cascade);
 
             modelBuilder.Entity<Mushroom>()
                .HasMany(m => m.Locations)
@@ -41,14 +54,15 @@ namespace mushroomAPI.Data
                         c => c.ToList()));
 
             modelBuilder.Entity<User>()
-                .Property(u => u.SavedRecognitions)
-                .HasConversion(
-                    v => JsonSerializer.Serialize(v ?? new List<MushroomCategory>(), jsonOptions),
-                    v => JsonSerializer.Deserialize<List<MushroomCategory>>(v, jsonOptions) ?? new List<MushroomCategory>(),
-                    new ValueComparer<List<MushroomCategory>>(
-                        (c1, c2) => (c1 ?? new List<MushroomCategory>()).SequenceEqual(c2 ?? new List<MushroomCategory>()),
-                        c => c.Aggregate(0, (a, v) => HashCode.Combine(a, v.GetHashCode())),
-                        c => c.ToList()));
+               .Property(u => u.SavedRecognitions)
+               .HasConversion(
+                   v => JsonSerializer.Serialize(v ?? new List<Recognition>(), jsonOptions),
+                   v => JsonSerializer.Deserialize<List<Recognition>>(v, jsonOptions) ?? new List<Recognition>(),
+                   new ValueComparer<List<Recognition>>(
+                       (c1, c2) => (c1 ?? new List<Recognition>())
+                           .SequenceEqual(c2 ?? new List<Recognition>()),
+                       c => c.Aggregate(0, (a, v) => HashCode.Combine(a, v.GetHashCode())),
+                       c => c.ToList()));
 
             modelBuilder.Entity<Coordinates>().HasData(
                 new { Id = 1, Latitude = 51.5074, Longitude = -0.1278, MushroomId = 3 },

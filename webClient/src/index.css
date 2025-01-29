@@ -18,7 +18,7 @@
 body {
   margin: 0;
   display: flex;
-  min-width: 320px;
+  min-width: 360px;
   min-height: 100vh;
 }
 
@@ -32,6 +32,7 @@ body {
   --color-primary-background: #8ea58b;
 }
 
+/* this needs to be moved from here, otherwise its not possible to override colors with tailwind without !important*/
 button {
   padding: 0.5em 1em;
   background-color: #ece7ca;

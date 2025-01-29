@@ -7,7 +7,7 @@
         public string Email { get; set; } = "";
         public byte[] PasswordHash { get; set; } = Array.Empty<byte>();
         public byte[] PasswordSalt { get; set; } = Array.Empty<byte>();
-        public List<MushroomCategory> SavedRecognitions { get; set; } = new List<MushroomCategory>();
+        public List<Recognition> SavedRecognitions { get; set; } = new();
         public bool IsAdmin { get; set; } = false;
     }
 }

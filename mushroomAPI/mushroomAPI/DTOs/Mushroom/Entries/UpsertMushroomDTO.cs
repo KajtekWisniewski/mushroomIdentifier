@@ -1,10 +1,9 @@
 ﻿using mushroomAPI.Entities;
 
-namespace mushroomAPI.DTOs
+namespace mushroomAPI.DTOs.Mushroom.Entries
 {
-    public class MushroomDTO
+    public class UpsertMushroomDTO
     {
-        public int Id { get; init; }
         public string Name { get; init; } = "";
         public string ScientificName { get; init; } = "";
         public MushroomCategory Category { get; init; }

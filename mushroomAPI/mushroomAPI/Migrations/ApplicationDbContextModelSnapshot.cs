@@ -90,6 +90,39 @@ namespace mushroomAPI.Migrations
                         });
                 });
 
+            modelBuilder.Entity("mushroomAPI.Entities.ForumPost", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Content")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<int>("MushroomId")
+                        .HasColumnType("integer");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<int>("UserId")
+                        .HasColumnType("integer");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("MushroomId");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("ForumPosts");
+                });
+
             modelBuilder.Entity("mushroomAPI.Entities.Mushroom", b =>
                 {
                     b.Property<int>("Id")
@@ -247,6 +280,25 @@ namespace mushroomAPI.Migrations
                     b.HasOne("mushroomAPI.Entities.Mushroom", null)
                         .WithMany("Locations")
                         .HasForeignKey("MushroomId");
+                });
+
+            modelBuilder.Entity("mushroomAPI.Entities.ForumPost", b =>
+                {
+                    b.HasOne("mushroomAPI.Entities.Mushroom", "Mushroom")
+                        .WithMany()
+                        .HasForeignKey("MushroomId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("mushroomAPI.Entities.User", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Mushroom");
+
+                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("mushroomAPI.Entities.Mushroom", b =>

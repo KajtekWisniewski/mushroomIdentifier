@@ -6,10 +6,18 @@ interface AuthState {
   user: UserProfileDTO | null;
 }
 
-const initialState: AuthState = {
-  token: localStorage.getItem('token') || null,
-  user: null
+const getInitialState = (): AuthState => {
+  const token = localStorage.getItem('token');
+  const userString = localStorage.getItem('user');
+  const user = userString ? JSON.parse(userString) : null;
+
+  return {
+    token,
+    user
+  };
 };
+
+const initialState: AuthState = getInitialState();
 
 const authSlice = createSlice({
   name: 'auth',
@@ -22,11 +30,13 @@ const authSlice = createSlice({
       state.token = action.payload.token;
       state.user = action.payload.user;
       localStorage.setItem('token', action.payload.token);
+      localStorage.setItem('user', JSON.stringify(action.payload.user));
     },
     logOut: (state) => {
       state.token = null;
       state.user = null;
       localStorage.removeItem('token');
+      localStorage.removeItem('user');
     }
   }
 });

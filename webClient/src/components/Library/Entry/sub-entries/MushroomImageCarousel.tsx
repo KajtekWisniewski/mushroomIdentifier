@@ -18,7 +18,21 @@ const MushroomImageCarousel = ({
 }: MushroomImageCarouselProps) => {
   const [currentImage, setCurrentImage] = useState(0);
 
-  if (!images.length) return null;
+  if (!images.length)
+    return (
+      <div
+        className={`relative w-full h-auto max-w-[600px] ${className}`}
+        style={{ aspectRatio: '16/9' }}
+      >
+        <div className="h-full w-full flex items-center justify-center overflow-hidden bg-black">
+          <img
+            src="https://media.istockphoto.com/id/1147544807/vector/thumbnail-image-vector-graphic.jpg?s=612x612&w=0&k=20&c=rnCKVbdxqkjlcs3xH87-9gocETqpspHFXu5dIGB4wuM="
+            alt={`${altText} - view 1`}
+            className="max-w-full max-h-full object-contain"
+          />
+        </div>
+      </div>
+    );
 
   if (images.length === 1 || disabled === true) {
     return (

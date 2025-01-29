@@ -2,6 +2,8 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using mushroomAPI.DTOs;
+using mushroomAPI.DTOs.Mushroom.Entries;
+using mushroomAPI.DTOs.Mushroom.Predictions;
 using mushroomAPI.Entities;
 using mushroomAPI.Repository.Contracts;
 
@@ -18,10 +20,13 @@ namespace mushroomAPI.Controllers
             _repository = repository;
             _mapper = mapper;
         }
+
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<MushroomDTO>>> GetAllMushrooms()
+        public async Task<ActionResult<PagedList<MushroomDTO>>> GetAllMushrooms(
+            [FromQuery] int page = 1,
+            [FromQuery] int pageSize = 10)
         {
-            return Ok(await _repository.GetAll<MushroomDTO>());
+            return Ok(await _repository.GetPaginated<MushroomDTO>(page, pageSize));
         }
 
         [HttpGet("{id}")]
@@ -32,10 +37,12 @@ namespace mushroomAPI.Controllers
         }
 
         [HttpGet("category/{category}")]
-        public async Task<ActionResult<IEnumerable<MushroomDTO>>> GetMushroomsByCategory(MushroomCategory category)
+        public async Task<ActionResult<PagedList<MushroomDTO>>> GetMushroomsByCategory(
+            MushroomCategory category,
+            [FromQuery] int page = 1,
+            [FromQuery] int pageSize = 10)
         {
-            var mushrooms = await _repository.GetAll<MushroomDTO>();
-            return Ok(mushrooms.Where(m => m.Category == category));
+            return Ok(await _repository.GetPaginatedByCategory<MushroomDTO>(category, page, pageSize));
         }
 
         [Authorize(Roles = "Admin")]
@@ -89,10 +96,10 @@ namespace mushroomAPI.Controllers
             var categories = Enum.GetValues<MushroomCategory>()
                 .OrderBy(x => random.Next())
                 .Take(5)
-                .Select(cat => new
+                .Select(cat => new RecognitionDTO
                 {
-                    category = cat.ToString(),
-                    confidence = $"{random.NextDouble() * 100:0.00}%"
+                    Category = cat,
+                    Confidence = $"{random.NextDouble() * 100:0.00}%"
                 })
                 .ToList();
 

@@ -1,10 +1,10 @@
-import { MushroomCategory } from '../mushroom/mushroom';
+import { RecognitionDTO } from '../recognitions/recognitions';
 
 export interface UserProfileDTO {
   username: string;
   email: string;
   isAdmin: boolean;
-  savedRecognitions: MushroomCategory[];
+  savedRecognitions: RecognitionDTO[];
 }
 
 export interface UserLoginDTO {

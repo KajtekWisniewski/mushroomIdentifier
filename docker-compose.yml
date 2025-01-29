@@ -1,46 +1,4 @@
 services:
-  # in case we add keycloak later:
-  # keycloak:
-  #   image: quay.io/keycloak/keycloak:24.0.4
-  #   environment:
-  #     HOSTNAME: localhost
-  #     KEYCLOAK_ADMIN: admin
-  #     KEYCLOAK_ADMIN_PASSWORD: admin
-  #     DB_VENDOR: postgres
-  #     DB_ADDR: keycloak-postgres
-  #     DB_PORT: 5432
-  #     DB_DATABASE: keycloak
-  #     DB_USER: keycloak
-  #     DB_PASSWORD: password
-  #     KC_LOG_LEVEL: INFO
-  #     ROOT_LOGLEVEL: INFO
-  #     KEYCLOAK_IMPORT: /opt/keycloak/data/import/realm-export.json
-  #   ports:
-  #     - '8080:8080'
-  #   command:
-  #     - start-dev
-  #     - --import-realm
-  #   depends_on:
-  #     - keycloak-postgres
-  #   networks:
-  #     - keycloak-net
-  #     - spa-net
-  #   volumes:
-  #     - ./realm-export.json:/opt/keycloak/data/import/realm-export.json
-
-  # keycloak-postgres:
-  #   image: postgres
-  #   ports:
-  #     - '5432:5432'
-  #   environment:
-  #     POSTGRES_DB: keycloak
-  #     POSTGRES_USER: keycloak
-  #     POSTGRES_PASSWORD: password
-  #   networks:
-  #     - keycloak-net
-  #   volumes:
-  #     - keycloak-db-data:/var/lib/postgresql/data
-
   backend-db:
     image: postgres
     environment:
@@ -61,56 +19,14 @@ services:
       - '4001:8080'
     depends_on:
       - backend-db
-      # - keycloak
     networks:
       - backend-net
-      # - keycloak-net
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
       - ConnectionStrings__Postgres=Host=backend-db;Port=5433;Database=api;Username=api;Password=password
-      # - Keycloak__realm=myrealm
-      # - Keycloak__auth-server-url=http://keycloak:8080/
-      # - Keycloak__ssl-required=none
-      # - Keycloak__resource=api-client
-      # - Keycloak__credentials__secret=z9JeCEJSQkj29aJxGZSnFW1gIzt7JSa2
-      # - Keycloak__confidential-port=0
-
-  # ai model service section
-  # flask-imitation:
-  #   build:
-  #     context: ./imitation
-  #   ports:
-  #     - '5000:5000'
-  #   volumes:
-  #     - ./imitation:/app
-  #   environment:
-  #     FLASK_ENV: development
-  #   networks:
-  #     - spa-net
-
-# frontend client
-# nextjs-app:
-#   build:
-#     context: ./stock-predictor-frontend
-#     dockerfile: Dockerfile
-#   ports:
-#     - '3000:3000'
-#   environment:
-#     NODE_ENV: development
-#   networks:
-#     - backend-net
-#     - keycloak-net
-#     - spa-net
-#   depends_on:
-#     - flask-imitation
-#     - backend
-#     - keycloak
 
 volumes:
   backend-db-data:
-  # keycloak-db-data:
 
 networks:
-  # keycloak-net:
   backend-net:
-  # spa-net:

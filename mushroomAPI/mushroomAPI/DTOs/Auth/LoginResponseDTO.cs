@@ -1,4 +1,6 @@
-namespace mushroomAPI.DTOs
+using mushroomAPI.DTOs.User;
+
+namespace mushroomAPI.DTOs.Auth
 {
     public class LoginResponseDTO
     {
