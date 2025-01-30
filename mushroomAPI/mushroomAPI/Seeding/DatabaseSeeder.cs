@@ -29,7 +29,7 @@ namespace mushroomAPI.Seeding
                 .RuleFor(m => m.Name, f => f.Commerce.ProductName())
                 .RuleFor(m => m.ScientificName, f => $"{f.Lorem.Word()} {f.Lorem.Word()}")
                 .RuleFor(m => m.Category, f => f.PickRandom<MushroomCategory>())
-                .RuleFor(m => m.Description, f => f.Lorem.Paragraphs(2))
+                .RuleFor(m => m.Description, f => f.Lorem.Paragraphs(1))
                 .RuleFor(m => m.IsEdible, f => f.Random.Bool(0.7f))
                 .RuleFor(m => m.Habitat, f => f.PickRandom(new[] {
                 "Deciduous forest", "Coniferous forest", "Mixed forest", "Alpine meadow",

@@ -50,7 +50,7 @@ const MushroomSearch = () => {
 
   return (
     <div className="w-full max-w-6xl mx-auto mt-2 px-4 flex flex-col items-center">
-      <div className="sticky top-10 bg-beige-500 p-4 rounded-lg shadow-lg z-10 mb-6 w-full max-w-[800px]">
+      <div className="sticky top-10 bg-beige-500 p-4 rounded-lg shadow-lg z-10 mb-6 w-full max-w-[770px]">
         <div className="flex flex-col gap-4">
           <div className="relative">
             <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />

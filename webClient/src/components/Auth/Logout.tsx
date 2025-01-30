@@ -1,5 +1,7 @@
 import { useDispatch } from 'react-redux';
 import { logOut } from '../../store/slices/authSlice';
+import { LogOut as LogOutIcon } from 'lucide-react';
+import clsx from 'clsx';
 
 const Logout = () => {
   const dispatch = useDispatch();
@@ -10,10 +12,14 @@ const Logout = () => {
 
   return (
     <button
-      className="h-[36px] flex items-center justify-center text-black"
       onClick={handleLogout}
+      className={clsx(
+        'flex items-center gap-2 px-4 py-2 rounded-lg transition-all',
+        'bg-red-500/10 text-red-100 hover:bg-red-500/20'
+      )}
     >
-      Logout
+      <LogOutIcon size={18} />
+      <span className="hidden sm:inline">Logout</span>
     </button>
   );
 };

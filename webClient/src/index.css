@@ -7,7 +7,7 @@
 
   color-scheme: light dark;
   color: black;
-  background-color: #8ea58b;
+  background-color: #7a8b76;
 
   font-synthesis: none;
   text-rendering: optimizeLegibility;
@@ -28,10 +28,15 @@ input:focus {
 }
 
 @theme {
-  --color-primary-500: #fbfd00;
-  --color-primary-600: #94c507;
-  --color-primary-700: #649200;
-  --color-primary-800: #517601;
+  --color-primary-50: #f2f9e8;
+  --color-primary-100: #e3f1d1;
+  --color-primary-200: #cce4aa;
+  --color-primary-300: #aed378;
+  --color-primary-400: #94c507;
+  --color-primary-500: #7ba805;
+  --color-primary-600: #649200;
+  --color-primary-700: #4d7005;
+  --color-primary-800: #3d5711;
   --color-primary-900: #324d3e;
 
   --color-beige-50: #faf9f2;
