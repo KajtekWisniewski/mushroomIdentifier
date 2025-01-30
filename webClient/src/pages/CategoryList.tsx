@@ -37,7 +37,7 @@ export default function CategoryMushroomList() {
 
       <div className="flex flex-col items-center justify-center">
         {data?.pages.map((page, pageIndex) => (
-          <div key={pageIndex} className="w-full">
+          <div key={pageIndex} className="w-full animate-fade-in">
             {page.items.map((mushroom) => (
               <Link to={`/mushroom/${mushroom.id}`} key={mushroom.id}>
                 <MushroomEntry mushroom={mushroom} id={mushroom.id} listView />

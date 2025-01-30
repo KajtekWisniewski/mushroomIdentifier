@@ -37,7 +37,7 @@ const MushroomImageCarousel = ({
   if (images.length === 1 || disabled === true) {
     return (
       <div
-        className={`relative w-full h-auto max-w-[600px] ${className}`}
+        className={`relative w-full h-auto min-w-[512px] max-w-[600px] ${className}`}
         style={{ aspectRatio: '16/9' }}
       >
         <div className="h-full w-full flex items-center justify-center overflow-hidden bg-black">

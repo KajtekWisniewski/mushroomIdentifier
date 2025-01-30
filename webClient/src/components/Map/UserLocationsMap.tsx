@@ -76,7 +76,7 @@ const UserLocationsMap = () => {
           center={[initialLocation.latitude, initialLocation.longitude]}
           zoom={13}
           scrollWheelZoom={true}
-          className="h-full w-full"
+          className="h-full w-full z-0"
           ref={setMap}
         >
           <MapEventHandler map={map as L.Map} />

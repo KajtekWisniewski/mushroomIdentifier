@@ -44,17 +44,17 @@ namespace mushroomAPI.Seeding
                 .RuleFor(m => m.CommonNames, f => f.Make(f.Random.Int(2, 5), () =>
                     f.Commerce.ProductName()).Distinct().ToList())
                 .RuleFor(m => m.ImageUrls, f => new List<string> {
-                f.Image.PicsumUrl(),
-                f.Image.PicsumUrl(),
-                f.Image.PicsumUrl(),
+                "https://media.istockphoto.com/id/1147544807/vector/thumbnail-image-vector-graphic.jpg?s=612x612&w=0&k=20&c=rnCKVbdxqkjlcs3xH87-9gocETqpspHFXu5dIGB4wuM=",
+                "https://media.istockphoto.com/id/1147544807/vector/thumbnail-image-vector-graphic.jpg?s=612x612&w=0&k=20&c=rnCKVbdxqkjlcs3xH87-9gocETqpspHFXu5dIGB4wuM=",
+                "https://media.istockphoto.com/id/1147544807/vector/thumbnail-image-vector-graphic.jpg?s=612x612&w=0&k=20&c=rnCKVbdxqkjlcs3xH87-9gocETqpspHFXu5dIGB4wuM="
                 }.Where(url => url != null).ToList())
                 .RuleFor(m => m.Locations, f => f.Make(f.Random.Int(2, 6), () =>
                     new Coordinates
                     {
                         Latitude = f.Random.Double(-90, 90),
                         Longitude = f.Random.Double(-180, 180),
-                        UserId = adminUser.Id,  // Add this
-                        Username = adminUser.Username  // Add this
+                        UserId = adminUser.Id,
+                        Username = adminUser.Username 
                     }).ToList())
                 .RuleFor(m => m.LastUpdated, f => DateTime.SpecifyKind(f.Date.Past(1), DateTimeKind.Utc));
 

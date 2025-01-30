@@ -8,7 +8,14 @@ const Logout = () => {
     dispatch(logOut());
   };
 
-  return <button onClick={handleLogout}>Logout</button>;
+  return (
+    <button
+      className="h-[36px] flex items-center justify-center text-black"
+      onClick={handleLogout}
+    >
+      Logout
+    </button>
+  );
 };
 
 export default Logout;

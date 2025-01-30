@@ -121,6 +121,26 @@ namespace mushroomAPI.Controllers
             return await _repository.SafeChangesAsync() ? NoContent() : BadRequest();
         }
 
+        [HttpGet("search")]
+        public async Task<ActionResult<PagedList<MushroomDTO>>> SearchMushrooms(
+        [FromQuery] string? searchTerm,
+        [FromQuery] MushroomCategory? category,
+        [FromQuery] string? season,
+        [FromQuery] bool? isEdible,
+        [FromQuery] int page = 1,
+        [FromQuery] int pageSize = 10)
+        {
+            var results = await _repository.SearchMushrooms<MushroomDTO>(
+                searchTerm,
+                category,
+                season,
+                isEdible,
+                page,
+                pageSize);
+
+            return Ok(results);
+        }
+
         [HttpGet("mock")]
         public ActionResult GetMockPredictions()
         {

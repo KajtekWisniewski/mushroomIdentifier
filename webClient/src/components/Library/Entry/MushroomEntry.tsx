@@ -31,7 +31,7 @@ const MushroomEntry = ({ mushroom, id, listView }: MushroomEntryProps) => {
       </header>
 
       <div className="flex flex-row text-left">
-        <div className="flex flex-row items-center justify-center">
+        <div className="flex flex-row items-center justify-center bg-black">
           <MushroomImageCarousel images={imageUrls} disabled={listView} />
         </div>
         <div className="pl-1">

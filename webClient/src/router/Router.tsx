@@ -7,6 +7,7 @@ import YourProfile from '../pages/Profile';
 import PrivateRoute from '../components/Auth/PrivateRoute';
 import Login from '../components/Auth/Login';
 import Register from '../components/Auth/Register';
+import LibraryMushroomSearch from '../pages/LibraryMushroomSearch';
 
 export default function Router() {
   return (
@@ -19,6 +20,7 @@ export default function Router() {
       <Route path="/profile" element={<PrivateRoute element={<YourProfile />} />} />
       <Route path="/login" element={<Login />} />
       <Route path="/register" element={<Register />} />
+      <Route path="/search" element={<LibraryMushroomSearch />} />
     </Routes>
   );
 }
