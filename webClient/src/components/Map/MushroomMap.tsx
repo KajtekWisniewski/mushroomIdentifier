@@ -1,7 +1,7 @@
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useEffect } from 'react';
 import { useSelector } from 'react-redux';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { Lock, Trash2 } from 'lucide-react';
+import { Lock, Trash2, Maximize2, Minimize2 } from 'lucide-react';
 import { MapContainer, TileLayer, Marker, Popup, useMapEvents } from 'react-leaflet';
 import 'leaflet/dist/leaflet.css';
 import httpClient from '../../utils/httpClient';
@@ -13,22 +13,42 @@ interface MushroomMapProps {
   mushroomId: number;
   locations: Coordinates[];
   mushroomName: string;
+  initialLocationId?: number;
 }
 
 const MapClickHandler = ({
-  onMapClick
+  onMapClick,
+  map
 }: {
   onMapClick: (latlng: L.LatLng) => void;
+  map: L.Map;
 }) => {
   useMapEvents({
     click: (e) => onMapClick(e.latlng)
   });
+
+  useEffect(() => {
+    if (map) {
+      const timer = setTimeout(() => {
+        map.invalidateSize();
+      }, 100);
+      return () => clearTimeout(timer);
+    }
+  }, [map]);
+
   return null;
 };
 
-const MushroomMap = ({ mushroomId, locations, mushroomName }: MushroomMapProps) => {
+const MushroomMap = ({
+  mushroomId,
+  locations,
+  mushroomName,
+  initialLocationId
+}: MushroomMapProps) => {
   const { user } = useSelector((state: RootState) => state.auth);
   const [selectedLocation, setSelectedLocation] = useState<L.LatLng | null>(null);
+  const [isFullscreen, setIsFullscreen] = useState(false);
+  const [map, setMap] = useState<L.Map | null>(null);
   const queryClient = useQueryClient();
 
   const addLocation = useMutation({
@@ -79,28 +99,60 @@ const MushroomMap = ({ mushroomId, locations, mushroomName }: MushroomMapProps) 
     [deleteLocation]
   );
 
+  const toggleFullscreen = useCallback(() => {
+    setIsFullscreen((prev) => !prev);
+    setTimeout(() => {
+      if (map) {
+        map.invalidateSize();
+      }
+    }, 100);
+  }, [map]);
+
+  const initialLocation = initialLocationId
+    ? locations.find((loc) => loc.id === initialLocationId)
+    : locations[0];
+
+  const mapCenter: [number, number] = initialLocation
+    ? [initialLocation.latitude, initialLocation.longitude]
+    : [51.505, -0.09];
+
   if (!user) {
     return (
-      <div className="h-96 w-full bg-gray-100 rounded-lg flex flex-col items-center justify-center text-gray-500">
+      <div className="h-full w-full bg-gray-100 rounded-lg flex flex-col items-center justify-center text-gray-500">
         <Lock className="w-12 h-12 mb-2" />
         <p className="text-lg">Please log in to view and add mushroom locations</p>
       </div>
     );
   }
 
+  const mapWrapperClasses = isFullscreen
+    ? 'fixed inset-4 z-50 bg-white rounded-lg shadow-xl'
+    : 'relative h-full w-full rounded-lg z-0';
+
   return (
-    <div className="relative h-full w-full rounded-lg z-0">
+    <div className={mapWrapperClasses}>
+      <button
+        onClick={toggleFullscreen}
+        className="absolute top-4 right-4 z-[1000] bg-white p-2 rounded-lg shadow-md hover:bg-gray-100"
+      >
+        {isFullscreen ? (
+          <Minimize2 className="w-5 h-5" />
+        ) : (
+          <Maximize2 className="w-5 h-5" />
+        )}
+      </button>
       <MapContainer
-        center={[locations[0]?.latitude || 51.505, locations[0]?.longitude || -0.09]}
+        center={mapCenter}
         zoom={13}
         scrollWheelZoom={true}
-        className="h-full w-full"
+        className="h-full w-full rounded-lg"
+        ref={setMap}
       >
         <TileLayer
           attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
           url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
         />
-        <MapClickHandler onMapClick={handleMapClick} />
+        <MapClickHandler onMapClick={handleMapClick} map={map as L.Map} />
         {locations.map((location, index) => {
           const isOwnMarker = user?.username === location.username;
 

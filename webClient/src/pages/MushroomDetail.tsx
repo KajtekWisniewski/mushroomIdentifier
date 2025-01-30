@@ -5,7 +5,7 @@ import Forum from '../components/Forum/Forum';
 import MushroomMap from '../components/Map/MushroomMap';
 
 export default function MushroomDetail() {
-  const { id } = useParams();
+  const { id, locationId } = useParams();
   const { data: mushroom, isLoading, error } = useMushroom(Number(id));
 
   if (isLoading) return <div>Loading...</div>;
@@ -16,15 +16,15 @@ export default function MushroomDetail() {
     <div>
       <div className="flex items-center flex-row justify-center">
         <MushroomEntry mushroom={mushroom} id={mushroom.id} />
-        <div className="h-[456px] w-[456px] bg-beige-400 m-2 rounded-2xl">
+        <div className="h-[456px] w-[456px] bg-beige-400 m-2 rounded-2xl overflow-hidden">
           <MushroomMap
             mushroomId={Number(id)}
             locations={mushroom.locations}
             mushroomName={mushroom.name}
-          ></MushroomMap>
+            initialLocationId={locationId ? Number(locationId) : undefined}
+          />
         </div>
       </div>
-
       <div className="flex m-4 bg-beige-400 rounded-2xl p-4">
         <Forum mushroomName={mushroom.name} mushroomId={mushroom.id} />
       </div>

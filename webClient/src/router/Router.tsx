@@ -14,6 +14,7 @@ export default function Router() {
       <Route path="/" element={<Home />}></Route>
       <Route path="/library" element={<Library />} />
       <Route path="/mushroom/:id" element={<MushroomDetail />} />
+      <Route path="/mushroom/:id/:locationId?" element={<MushroomDetail />} />
       <Route path="/library/category/:categoryId" element={<CategoryMushroomList />} />
       <Route path="/profile" element={<PrivateRoute element={<YourProfile />} />} />
       <Route path="/login" element={<Login />} />

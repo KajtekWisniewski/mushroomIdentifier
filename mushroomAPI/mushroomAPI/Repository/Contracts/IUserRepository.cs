@@ -1,4 +1,5 @@
 ﻿using mushroomAPI.Entities;
+using mushroomAPI.DTOs.User;
 
 namespace mushroomAPI.Repository.Contracts
 {
@@ -13,6 +14,7 @@ namespace mushroomAPI.Repository.Contracts
         void DeleteById(int id);
         void UpdateById(int id, User user);
         Task<bool> UpdateAdminStatus(int userId, bool isAdmin);
+        Task<List<UserLocationDTO>> GetUserLocations(int userId);
         Task<bool> SafeChangesAsync();
     }
 }

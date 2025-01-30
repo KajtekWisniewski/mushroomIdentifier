@@ -32,7 +32,7 @@ export const ForumPost = ({
     <div className={`flex ${isOwnPost ? 'justify-end' : 'justify-start'} mb-4`}>
       <div
         className={`max-w-[70%] ${
-          isOwnPost ? 'bg-primary-700 bg-opacity-10 text-white' : 'bg-white'
+          isOwnPost ? 'bg-primary-700 bg-opacity-10 text-white' : 'bg-white text-black'
         } rounded-lg shadow-md p-4`}
       >
         <div
@@ -42,7 +42,7 @@ export const ForumPost = ({
         >
           <div className={`flex flex-col ${isOwnPost ? 'items-end' : 'items-start'}`}>
             <span className="font-semibold">{post.username}</span>
-            <span className="text-white text-sm">
+            <span className="text-black text-sm">
               {formatDate(post.createdAt)}
               {post.updatedAt && ' (edited)'}
             </span>
