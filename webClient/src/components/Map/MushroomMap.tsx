@@ -1,9 +1,17 @@
 import { useState, useCallback, useEffect } from 'react';
 import { useSelector } from 'react-redux';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { Lock, Trash2, Maximize2, Minimize2 } from 'lucide-react';
-import { MapContainer, TileLayer, Marker, Popup, useMapEvents } from 'react-leaflet';
+import { Lock, Trash2, Maximize2, Minimize2, Navigation, X } from 'lucide-react';
+import {
+  MapContainer,
+  TileLayer,
+  Marker,
+  Popup,
+  useMapEvents,
+  Polyline
+} from 'react-leaflet';
 import 'leaflet/dist/leaflet.css';
+import { LatLng, Map as LeafletMap } from 'leaflet';
 import httpClient from '../../utils/httpClient';
 import { RootState } from '../../store';
 import { Coordinates, SaveCoordinatesDTO } from '../../contracts/mushroom/mushroom';
@@ -16,15 +24,56 @@ interface MushroomMapProps {
   initialLocationId?: number;
 }
 
+interface NavigationState {
+  isNavigating: boolean;
+  startPoint: LatLng | null;
+  endPoint: LatLng | null;
+  route: LatLng[] | null;
+}
+
+const LocationMarker = ({
+  onLocationFound
+}: {
+  onLocationFound: (latlng: LatLng) => void;
+}) => {
+  const [position, setPosition] = useState<LatLng | null>(null);
+
+  const map = useMapEvents({
+    locationfound(e) {
+      setPosition(e.latlng);
+      onLocationFound(e.latlng);
+      map.flyTo(e.latlng, map.getZoom());
+    }
+  });
+
+  return position === null ? null : (
+    <Marker position={position}>
+      <Popup>You are here</Popup>
+    </Marker>
+  );
+};
+
 const MapClickHandler = ({
   onMapClick,
-  map
+  map,
+  navigationState,
+  onNavigationClick
 }: {
-  onMapClick: (latlng: L.LatLng) => void;
-  map: L.Map;
+  onMapClick: (latlng: LatLng) => void;
+  map: LeafletMap;
+  navigationState: NavigationState;
+  onNavigationClick: (latlng: LatLng) => void;
 }) => {
+  const handleClick = (e: { latlng: LatLng }) => {
+    if (navigationState.isNavigating) {
+      onNavigationClick(e.latlng);
+    } else {
+      onMapClick(e.latlng);
+    }
+  };
+
   useMapEvents({
-    click: (e) => onMapClick(e.latlng)
+    click: handleClick
   });
 
   useEffect(() => {
@@ -46,10 +95,17 @@ const MushroomMap = ({
   initialLocationId
 }: MushroomMapProps) => {
   const { user } = useSelector((state: RootState) => state.auth);
-  const [selectedLocation, setSelectedLocation] = useState<L.LatLng | null>(null);
+  const [selectedLocation, setSelectedLocation] = useState<LatLng | null>(null);
   const [isFullscreen, setIsFullscreen] = useState(false);
-  const [map, setMap] = useState<L.Map | null>(null);
+  const [map, setMap] = useState<LeafletMap | null>(null);
   const queryClient = useQueryClient();
+
+  const [navigationState, setNavigationState] = useState<NavigationState>({
+    isNavigating: false,
+    startPoint: null,
+    endPoint: null,
+    route: null
+  });
 
   const addLocation = useMutation({
     mutationFn: async (coordinates: SaveCoordinatesDTO) => {
@@ -75,12 +131,81 @@ const MushroomMap = ({
   });
 
   const handleMapClick = useCallback(
-    (latlng: L.LatLng) => {
+    (latlng: LatLng) => {
       if (!user) return;
       setSelectedLocation(latlng);
     },
     [user]
   );
+
+  const fetchRoute = async (start: LatLng, end: LatLng) => {
+    try {
+      const response = await fetch(
+        `https://router.project-osrm.org/route/v1/foot/${start.lng},${start.lat};${end.lng},${end.lat}?overview=full&geometries=geojson`
+      );
+      const data = await response.json();
+
+      if (data.routes && data.routes[0]) {
+        const coordinates = data.routes[0].geometry.coordinates.map(
+          (coord: [number, number]) => new LatLng(coord[1], coord[0])
+        );
+        setNavigationState((prev) => ({
+          ...prev,
+          route: coordinates
+        }));
+      }
+    } catch (error) {
+      console.error('Failed to fetch route:', error);
+    }
+  };
+
+  const handleNavigationClick = useCallback((latlng: LatLng) => {
+    setNavigationState((prev) => {
+      if (!prev.startPoint) {
+        return {
+          ...prev,
+          startPoint: latlng
+        };
+      } else {
+        fetchRoute(prev.startPoint, latlng);
+        return {
+          ...prev,
+          endPoint: latlng
+        };
+      }
+    });
+  }, []);
+
+  const handleStartNavigation = () => {
+    setNavigationState({
+      isNavigating: true,
+      startPoint: null,
+      endPoint: null,
+      route: null
+    });
+  };
+
+  const handleCancelNavigation = () => {
+    setNavigationState({
+      isNavigating: false,
+      startPoint: null,
+      endPoint: null,
+      route: null
+    });
+  };
+
+  const handleUseCurrentLocation = () => {
+    if (map) {
+      map.locate();
+    }
+  };
+
+  const handleLocationFound = (latlng: LatLng) => {
+    setNavigationState((prev) => ({
+      ...prev,
+      startPoint: latlng
+    }));
+  };
 
   const handleAddLocation = useCallback(() => {
     if (!selectedLocation) return;
@@ -131,6 +256,33 @@ const MushroomMap = ({
 
   return (
     <div className={mapWrapperClasses}>
+      <div className="absolute top-4 left-4 z-[1000] flex gap-2">
+        {!navigationState.isNavigating ? (
+          <button
+            onClick={handleStartNavigation}
+            className="bg-white p-2 ml-10 rounded-lg shadow-md hover:bg-gray-100 flex items-center gap-2"
+          >
+            <Navigation className="w-5 h-5" />
+            Start Navigation
+          </button>
+        ) : (
+          <>
+            <button
+              onClick={handleUseCurrentLocation}
+              className="bg-white p-2 rounded-lg shadow-md hover:bg-gray-100"
+            >
+              Use Current Location
+            </button>
+            <button
+              onClick={handleCancelNavigation}
+              className="bg-white p-2 rounded-lg shadow-md hover:bg-gray-100"
+            >
+              <X className="w-5 h-5" />
+            </button>
+          </>
+        )}
+      </div>
+
       <button
         onClick={toggleFullscreen}
         className="absolute top-4 right-4 z-[1000] bg-white p-2 rounded-lg shadow-md hover:bg-gray-100"
@@ -141,6 +293,7 @@ const MushroomMap = ({
           <Maximize2 className="w-5 h-5" />
         )}
       </button>
+
       <MapContainer
         center={mapCenter}
         zoom={13}
@@ -152,10 +305,20 @@ const MushroomMap = ({
           attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
           url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
         />
-        <MapClickHandler onMapClick={handleMapClick} map={map as L.Map} />
+
+        <MapClickHandler
+          onMapClick={handleMapClick}
+          map={map as LeafletMap}
+          navigationState={navigationState}
+          onNavigationClick={handleNavigationClick}
+        />
+
+        {navigationState.isNavigating && (
+          <LocationMarker onLocationFound={handleLocationFound} />
+        )}
+
         {locations.map((location, index) => {
           const isOwnMarker = user?.username === location.username;
-
           return (
             <Marker
               key={location.id || index}
@@ -182,20 +345,68 @@ const MushroomMap = ({
                       Delete
                     </button>
                   )}
+                  {navigationState.isNavigating && !navigationState.startPoint && (
+                    <button
+                      onClick={() =>
+                        handleNavigationClick(
+                          new LatLng(location.latitude, location.longitude)
+                        )
+                      }
+                      className="bg-blue-500 text-white px-2 py-1 rounded hover:bg-blue-600"
+                    >
+                      Start from here
+                    </button>
+                  )}
+                  {navigationState.isNavigating &&
+                    navigationState.startPoint &&
+                    !navigationState.endPoint && (
+                      <button
+                        onClick={() =>
+                          handleNavigationClick(
+                            new LatLng(location.latitude, location.longitude)
+                          )
+                        }
+                        className="bg-green-500 text-white px-2 py-1 rounded hover:bg-green-600"
+                      >
+                        Navigate to here
+                      </button>
+                    )}
                 </div>
               </Popup>
             </Marker>
           );
         })}
-        {selectedLocation && (
+
+        {navigationState.startPoint && (
+          <Marker position={navigationState.startPoint}>
+            <Popup>Start point</Popup>
+          </Marker>
+        )}
+
+        {navigationState.endPoint && (
+          <Marker position={navigationState.endPoint}>
+            <Popup>Destination</Popup>
+          </Marker>
+        )}
+
+        {navigationState.route && (
+          <Polyline
+            positions={navigationState.route}
+            color="blue"
+            weight={3}
+            opacity={0.7}
+          />
+        )}
+
+        {selectedLocation && !navigationState.isNavigating && (
           <Marker position={[selectedLocation.lat, selectedLocation.lng]}>
             <Popup>
               <div className="flex flex-col gap-2">
-                <p>New location</p>
+                <p>Report finding</p>
                 <button
                   onClick={handleAddLocation}
                   disabled={addLocation.isPending}
-                  className="!bg-primary-800 text-white px-2 py-1 rounded hover:bg-primary-900 disabled:opacity-50 text-sm"
+                  className="bg-primary-800 text-black px-2 py-1 rounded hover:bg-primary-900 disabled:opacity-50 text-sm"
                 >
                   {addLocation.isPending ? 'Adding...' : 'Confirm Location'}
                 </button>
@@ -204,6 +415,7 @@ const MushroomMap = ({
           </Marker>
         )}
       </MapContainer>
+
       {(addLocation.isError || deleteLocation.isError) && (
         <div className="absolute bottom-4 right-4 bg-red-100 text-red-700 px-4 py-2 rounded z-[1000]">
           Failed to {addLocation.isError ? 'add' : 'delete'} location. Please try again.
