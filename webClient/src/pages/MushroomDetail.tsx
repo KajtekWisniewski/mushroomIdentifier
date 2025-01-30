@@ -13,7 +13,7 @@ export default function MushroomDetail() {
   if (!mushroom) return <div>Mushroom not found</div>;
 
   return (
-    <div className="flex flex-wrap justify-center">
+    <div className="flex flex-col justify-center items-center">
       <div className="flex items-center flex-row justify-center flex-wrap">
         <MushroomEntry mushroom={mushroom} id={mushroom.id} />
         <div className="h-[501px] w-[501px] bg-beige-400 m-2 rounded-2xl overflow-hidden">
@@ -25,7 +25,7 @@ export default function MushroomDetail() {
           />
         </div>
       </div>
-      <div className="flex m-4 bg-beige-400 rounded-2xl p-4 max-w-[1288px]">
+      <div className="flex m-4 bg-beige-400 rounded-2xl p-4 w-full max-w-[1288px]">
         <Forum mushroomName={mushroom.name} mushroomId={mushroom.id} />
       </div>
     </div>
