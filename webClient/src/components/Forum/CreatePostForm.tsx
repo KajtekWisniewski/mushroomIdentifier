@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { UseMutationResult } from '@tanstack/react-query';
 import { ForumPostDTO, CreateForumPostDTO } from '../../contracts/forum/forum';
+import { MessageSquarePlus, MessageSquareDiff } from 'lucide-react';
 
 interface CreatePostFormProps {
   newPost: string;
@@ -31,41 +32,79 @@ export const CreatePostForm = ({
       console.error('Error creating post:', error);
     }
   };
+
   const handleHide = () => {
     setHideCreateReplyForm(!hideCreateReplyForm);
   };
 
   return (
-    <>
-      <div className="sticky top-10 bg-beige-400 w-full p-4 rounded-lg rounded-tl-none rounded-tr-none shadow-lg z-5">
+    <div className="bg-beige-100 rounded-lg shadow-md overflow-hidden">
+      <div className="p-6">
+        <div className="flex items-center justify-between mb-6">
+          <div className="flex items-center gap-3">
+            <MessageSquarePlus className="w-5 h-5 text-primary-600" />
+            <h3 className="text-lg font-medium text-primary-900">Create Post</h3>
+          </div>
+          <button
+            type="button"
+            onClick={handleHide}
+            className="flex items-center gap-2 px-4 py-2 bg-primary-700 text-white rounded-lg hover:bg-primary-800 transition-all duration-200 shadow-sm"
+          >
+            {hideCreateReplyForm ? (
+              <>
+                <MessageSquarePlus className="w-5 h-5" />
+                <span className="hidden sm:inline">Show Form</span>
+              </>
+            ) : (
+              <>
+                <MessageSquareDiff className="w-5 h-5" />
+                <span className="hidden sm:inline">Hide Form</span>
+              </>
+            )}
+          </button>
+        </div>
+
         {!hideCreateReplyForm && (
-          <form onSubmit={handleSubmit}>
-            <textarea
-              value={newPost}
-              onChange={(e) => setNewPost(e.target.value)}
-              placeholder="Write your post..."
-              className="w-full p-4 border rounded-lg mb-2 bg-white"
-              rows={4}
-            />
+          <form onSubmit={handleSubmit} className="space-y-6">
+            <div className="relative">
+              <textarea
+                value={newPost}
+                onChange={(e) => setNewPost(e.target.value)}
+                placeholder="Share your thoughts..."
+                className="w-full p-4 border border-beige-300 rounded-lg bg-white 
+                          focus:ring-2 focus:ring-primary-500 focus:border-transparent
+                          transition-all duration-200 resize-y min-h-[120px]
+                          placeholder-beige-400"
+                rows={4}
+              />
+            </div>
+
             <div className="flex justify-end">
               <button
                 type="submit"
                 disabled={createPost.isPending}
-                className="!bg-primary-800 text-white px-6 py-2 rounded-lg hover:bg-primary-900 disabled:opacity-50"
+                className="inline-flex items-center justify-center px-6 py-2.5 
+                         bg-primary-700 text-white rounded-lg 
+                         hover:bg-primary-800 transition-all duration-200
+                         disabled:opacity-50 disabled:cursor-not-allowed
+                         shadow-sm hover:shadow-md"
               >
-                {createPost.isPending ? 'Posting...' : 'Post'}
+                {createPost.isPending ? (
+                  <span className="flex items-center gap-2">
+                    <span
+                      className="inline-block w-4 h-4 border-2 border-white 
+                                   border-t-transparent rounded-full animate-spin"
+                    />
+                    Posting...
+                  </span>
+                ) : (
+                  'Post'
+                )}
               </button>
             </div>
           </form>
         )}
-        <button
-          type="button"
-          onClick={handleHide}
-          className="!bg-primary-800 text-white ml-2 w-fit"
-        >
-          {hideCreateReplyForm ? 'show form' : 'hide form'}
-        </button>
       </div>
-    </>
+    </div>
   );
 };

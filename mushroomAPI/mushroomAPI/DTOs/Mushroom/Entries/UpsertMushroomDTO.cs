@@ -1,4 +1,5 @@
-﻿using mushroomAPI.Entities;
+﻿using mushroomAPI.DTOs.Mushroom.Location;
+using mushroomAPI.Entities;
 
 namespace mushroomAPI.DTOs.Mushroom.Entries
 {
@@ -13,7 +14,7 @@ namespace mushroomAPI.DTOs.Mushroom.Entries
         public string Season { get; init; } = "";
         public List<string> CommonNames { get; init; } = new List<string>();
         public List<string> ImageUrls { get; init; } = new List<string>();
-        public List<Coordinates> Locations { get; init; } = new List<Coordinates>();
+        public List<LocationDTO> Locations { get; init; } = new();
         public DateTime LastUpdated { get; init; }
     }
 }

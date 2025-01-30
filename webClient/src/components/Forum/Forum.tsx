@@ -49,12 +49,17 @@ const Forum = ({ mushroomId, mushroomName }: ForumProps) => {
   if (error) return <div className="text-center text-red-500">Error loading posts</div>;
 
   return (
-    <div className="max-w-6xl mx-auto px-4">
-      <div className="mb-6">
-        <h2 className="text-2xl font-bold">Discussion: {mushroomName}</h2>
+    <div className="w-full max-w-[1288px] mx-auto">
+      <div className="mb-8 bg-beige-100 p-6 rounded-lg shadow-md">
+        <div className="flex items-center gap-4">
+          <h2 className="text-2xl font-bold text-primary-900">
+            Discussion:
+            <span className="ml-2 text-primary-700">{mushroomName}</span>
+          </h2>
+        </div>
       </div>
 
-      <div className="flex flex-col w-[1000px] gap-6">
+      <div className="space-y-8">
         {user ? (
           <CreatePostForm
             newPost={newPost}
@@ -63,8 +68,10 @@ const Forum = ({ mushroomId, mushroomName }: ForumProps) => {
             mushroomId={mushroomId}
           />
         ) : (
-          <div className="sticky top-0 z-10 text-center p-4 bg-gray-100 rounded-lg">
-            Please log in to participate in the discussion.
+          <div className="bg-beige-100 p-6 rounded-lg text-center shadow-md">
+            <p className="text-primary-800 font-medium">
+              Please log in to participate in the discussion.
+            </p>
           </div>
         )}
 
@@ -79,13 +86,11 @@ const Forum = ({ mushroomId, mushroomName }: ForumProps) => {
                       user?.username === post.username ? 'justify-end' : 'justify-start'
                     }`}
                   >
-                    <div className="">
-                      <EditPostForm
-                        editingPost={editingPost}
-                        setEditingPost={setEditingPost}
-                        updatePost={updatePost}
-                      />
-                    </div>
+                    <EditPostForm
+                      editingPost={editingPost}
+                      setEditingPost={setEditingPost}
+                      updatePost={updatePost}
+                    />
                   </div>
                 ) : (
                   <ForumPost

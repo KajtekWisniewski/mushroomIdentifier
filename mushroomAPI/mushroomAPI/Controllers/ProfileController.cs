@@ -141,5 +141,18 @@ namespace mushroomAPI.Controllers
 
             return await _userRepository.SafeChangesAsync() ? NoContent() : BadRequest();
         }
+
+        [HttpGet("locations")]
+        [Authorize]
+        public async Task<ActionResult<List<UserLocationDTO>>> GetUserLocations()
+        {
+            var userIdClaim = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            if (userIdClaim == null) return Unauthorized();
+
+            var userId = int.Parse(userIdClaim);
+            var locations = await _userRepository.GetUserLocations(userId);
+
+            return Ok(locations);
+        }
     }
 }

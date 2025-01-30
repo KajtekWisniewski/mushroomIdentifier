@@ -18,35 +18,29 @@ const MushroomImageCarousel = ({
 }: MushroomImageCarouselProps) => {
   const [currentImage, setCurrentImage] = useState(0);
 
-  if (!images.length)
+  const placeholderImage =
+    'https://media.istockphoto.com/id/1147544807/vector/thumbnail-image-vector-graphic.jpg?s=612x612&w=0&k=20&c=rnCKVbdxqkjlcs3xH87-9gocETqpspHFXu5dIGB4wuM=';
+
+  if (!images.length) {
     return (
-      <div
-        className={`relative w-full h-auto max-w-[600px] ${className}`}
-        style={{ aspectRatio: '16/9' }}
-      >
-        <div className="h-full w-full flex items-center justify-center overflow-hidden bg-black">
-          <img
-            src="https://media.istockphoto.com/id/1147544807/vector/thumbnail-image-vector-graphic.jpg?s=612x612&w=0&k=20&c=rnCKVbdxqkjlcs3xH87-9gocETqpspHFXu5dIGB4wuM="
-            alt={`${altText} - view 1`}
-            className="max-w-full max-h-full object-contain"
-          />
-        </div>
+      <div className={`aspect-square ${className} flex`}>
+        <img
+          src={placeholderImage}
+          alt={`${altText} - view 1`}
+          className="w-full h-full object-cover"
+        />
       </div>
     );
+  }
 
   if (images.length === 1 || disabled === true) {
     return (
-      <div
-        className={`relative w-full h-auto max-w-[600px] ${className}`}
-        style={{ aspectRatio: '16/9' }}
-      >
-        <div className="h-full w-full flex items-center justify-center overflow-hidden bg-black">
-          <img
-            src={images[0]}
-            alt={`${altText} - view 1`}
-            className="max-w-full max-h-full object-contain"
-          />
-        </div>
+      <div className={`aspect-square ${className}`}>
+        <img
+          src={images[0]}
+          alt={`${altText} - view 1`}
+          className="w-full h-full object-cover"
+        />
       </div>
     );
   }
@@ -60,24 +54,18 @@ const MushroomImageCarousel = ({
   };
 
   return (
-    <div
-      className={`relative w-full h-auto max-w-[700px] ${className}`}
-      style={{ aspectRatio: '16/9' }}
-    >
-      <div className="relative h-full w-full flex items-center justify-center overflow-hidden rounded-lg bg-black">
+    <div className={`relative aspect-square ${className}`}>
+      <div className="relative h-full w-full overflow-hidden">
         <div
           className="flex h-full transition-transform duration-300 ease-out"
           style={{ transform: `translateX(-${currentImage * 100}%)` }}
         >
           {images.map((url, index) => (
-            <div
-              key={`image-${index}`}
-              className="flex-shrink-0 w-full h-full flex items-center justify-center"
-            >
+            <div key={`image-${index}`} className="flex-shrink-0 w-full h-full">
               <img
                 src={url}
                 alt={`${altText} - view ${index + 1}`}
-                className="max-w-full max-h-full object-contain"
+                className="w-full h-full object-cover"
               />
             </div>
           ))}
@@ -86,20 +74,20 @@ const MushroomImageCarousel = ({
 
       <button
         onClick={prevImage}
-        className="absolute left-2 top-1/2 -translate-y-1/2 p-2 rounded-full bg-black/50 text-white hover:bg-black/75"
+        className="absolute left-2 top-1/2 -translate-y-1/2 p-2 rounded-full bg-black/50 text-white hover:bg-black/75 transition-colors"
       >
         <ChevronLeft className="w-6 h-6" />
       </button>
 
       <button
         onClick={nextImage}
-        className="absolute right-2 top-1/2 -translate-y-1/2 p-2 rounded-full bg-black/50 text-white hover:bg-black/75"
+        className="absolute right-2 top-1/2 -translate-y-1/2 p-2 rounded-full bg-black/50 text-white hover:bg-black/75 transition-colors"
       >
         <ChevronRight className="w-6 h-6" />
       </button>
 
-      {showCounter && (
-        <div className="absolute bottom-4 right-4 bg-black/50 text-white px-2 py-1 rounded-md text-sm">
+      {showCounter && images.length > 1 && (
+        <div className="absolute bottom-4 right-4 bg-black/50 text-white px-3 py-1 rounded-full text-sm">
           {currentImage + 1} / {images.length}
         </div>
       )}

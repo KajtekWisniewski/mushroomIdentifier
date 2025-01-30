@@ -4,6 +4,8 @@ using mushroomAPI.Entities;
 using mushroomAPI.Repository.Contracts;
 using AutoMapper.QueryableExtensions;
 using Microsoft.EntityFrameworkCore;
+using mushroomAPI.DTOs.Mushroom.Coordinates;
+using mushroomAPI.DTOs.User;
 
 namespace mushroomAPI.Repository
 {
@@ -70,6 +72,30 @@ namespace mushroomAPI.Repository
 
             user.IsAdmin = isAdmin;
             return await SafeChangesAsync();
+        }
+
+        public async Task<List<UserLocationDTO>> GetUserLocations(int userId)
+        {
+            return await context.Mushrooms
+                .Where(m => m.Locations.Any(l => l.UserId == userId))
+                .Select(m => new UserLocationDTO
+                {
+                    MushroomId = m.Id,
+                    MushroomName = m.Name,
+                    MushroomImages = m.ImageUrls,
+                    Coordinates = m.Locations
+                        .Where(l => l.UserId == userId)
+                        .Select(l => new CoordinatesDTO
+                        {
+                            Id = l.Id,
+                            Latitude = l.Latitude,
+                            Longitude = l.Longitude,
+                            UserId = l.UserId,
+                            Username = l.Username
+                        })
+                        .ToList()
+                })
+                .ToListAsync();
         }
 
         public async Task<bool> SafeChangesAsync()

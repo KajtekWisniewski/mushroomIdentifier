@@ -1,23 +1,13 @@
-import ImageUpload from '../components/Home/ImageUpload';
 import { useMutation } from '@tanstack/react-query';
-import httpClient from '../utils/httpClient';
-import {
-  // CategoriesDTO,
-  MushroomPrediction,
-  MushroomCategory
-} from '../contracts/mushroom/mushroom';
 import { Link } from 'react-router-dom';
+import { ArrowRight, Upload, AlertCircle, CheckCircle2 } from 'lucide-react';
+import { useEffect } from 'react';
+import { MushroomPrediction, MushroomCategory } from '../contracts/mushroom/mushroom';
+import ImageUpload from '../components/Home/ImageUpload';
 import SaveRecognition from '../components/Home/SaveRecogniton';
-import { ArrowRight } from 'lucide-react';
-
-// mock data endpoint
-// const fetchMushroomCategories = async (): Promise<CategoriesDTO> => {
-//   const { data } = await httpClient.get<CategoriesDTO>('/api/mushrooms/mock');
-//   return data;
-// };
+import httpClient from '../utils/httpClient';
 
 export default function Home() {
-  // ai model post request section
   const uploadMutation = useMutation({
     mutationFn: async (file: File) => {
       const formData = new FormData();
@@ -42,6 +32,22 @@ export default function Home() {
     }
   });
 
+  useEffect(() => {
+    if (uploadMutation.isSuccess) {
+      window.scrollTo({
+        top: document.documentElement.scrollHeight,
+        behavior: 'smooth'
+      });
+    }
+
+    return () => {
+      window.scrollTo({
+        top: 0,
+        behavior: 'instant'
+      });
+    };
+  }, [uploadMutation.isSuccess]);
+
   const onImageCapture = async (file: File) => {
     try {
       const data = await uploadMutation.mutateAsync(file);
@@ -51,91 +57,102 @@ export default function Home() {
     }
   };
 
-  // mock data section
-
-  // const { mutateAsync, isPending, error, data } = useMutation<
-  //   CategoriesDTO,
-  //   Error,
-  //   void
-  // >({
-  //   mutationFn: fetchMushroomCategories
-  // });
-
-  // const onImageCapture = async () => {
-  //   try {
-  //     const data = await mutateAsync();
-  //     return data;
-  //   } catch (error) {
-  //     console.error('Error in onImageCapture:', error);
-  //   }
-  // };
-
   const getCategoryEnumValue = (categoryId: number | string): MushroomCategory => {
     if (typeof categoryId === 'number' || !isNaN(Number(categoryId))) {
       return Number(categoryId) as MushroomCategory;
     }
-
     return MushroomCategory[categoryId as keyof typeof MushroomCategory];
   };
 
   const { data } = uploadMutation;
 
   return (
-    // ai model section
-    <div className="container mx-auto px-4">
-      {uploadMutation.isPending && (
-        <div className="text-center text-blue-500 my-2">Uploading image...</div>
-      )}
-      {uploadMutation.isError && (
-        <div className="text-center text-red-500 my-2">
-          Upload failed! Please try again.
+    <div className="bg-gradient-to-b from-primary-900/10 to-transparent">
+      <div className="max-w-7xl mx-auto px-4 py-12">
+        <div className="text-center mb-12">
+          <h1 className="text-4xl font-bold text-primary-900 mb-4">
+            Mushroom Recognition
+          </h1>
+          <p className="text-lg text-primary-800 max-w-2xl mx-auto">
+            Upload a photo of a mushroom to identify its species and get detailed
+            information about its characteristics.
+          </p>
         </div>
-      )}
-      {uploadMutation.isSuccess && (
-        <div className="text-center text-green-500 my-2">Upload successful!</div>
-      )}
-      {/* mock section */}
-      {/* {isPending && (
-        <div className="text-center text-blue-500 my-2">Loading data...</div>
-      )}
-      {error && (
-        <div className="text-center text-red-500 my-2">
-          Failed to fetch data: {error.message}
+
+        <div className="max-w-md mx-auto mb-8">
+          {uploadMutation.isPending && (
+            <div className="flex items-center justify-center gap-2 text-primary-600 bg-primary-300 p-4 rounded-lg">
+              <Upload className="w-5 h-5 animate-spin" />
+              <span>Processing your image...</span>
+            </div>
+          )}
+          {uploadMutation.isError && (
+            <div className="flex items-center justify-center gap-2 text-red-600 bg-red-50 p-4 rounded-lg">
+              <AlertCircle className="w-5 h-5" />
+              <span>Upload failed! Please try again.</span>
+            </div>
+          )}
+          {uploadMutation.isSuccess && (
+            <div className="flex items-center justify-center gap-2 text-green-600 bg-green-50 p-4 rounded-lg">
+              <CheckCircle2 className="w-5 h-5" />
+              <span>Analysis complete!</span>
+            </div>
+          )}
         </div>
-      )} */}
-      {data && (
-        <div className="flex flex-col gap-4 mt-6 items-center">
-          {data.predictions.map((prediction: MushroomPrediction) => {
-            const categoryId = getCategoryEnumValue(prediction.category);
-            const categoryName = MushroomCategory[categoryId];
-            return (
-              <div className="w-[40%]" key={`prediction-${prediction.category}`}>
-                <Link
-                  to={`/library/category/${categoryId.toString()}`}
-                  className="flex flex-row p-4 border rounded-lg hover:bg-primary-700 transition-colors w-full hover:scale-101"
-                >
-                  <div className="flex justify-between w-full items-center">
-                    <div className="flex justify-between gap-4 items-center">
-                      <span className="text-lg font-medium capitalize">
-                        {categoryName}
-                      </span>
-                      <div className="flex items-center gap-4">
-                        <span className="text-gray-600">
-                          Confidence: {prediction.confidence}
-                        </span>
+
+        <div className="max-w-2xl mx-auto mb-12 bg-beige-500 p-8 rounded-2xl shadow-lg">
+          <ImageUpload onImageCapture={onImageCapture} />
+        </div>
+
+        {data && (
+          <div className="max-w-3xl mx-auto">
+            <h2 className="text-2xl font-semibold text-primary-800 mb-6 text-center">
+              Analysis Results
+            </h2>
+            <div className="flex justify-center mb-2">
+              <SaveRecognition predictions={data.predictions} />
+            </div>
+            <div className="space-y-4 mb-8">
+              {data.predictions.map((prediction: MushroomPrediction) => {
+                const categoryId = getCategoryEnumValue(prediction.category);
+                const categoryName = MushroomCategory[categoryId];
+                const confidence = parseFloat(prediction.confidence);
+
+                return (
+                  <div key={`prediction-${prediction.category}`}>
+                    <Link
+                      to={`/library/category/${categoryId.toString()}`}
+                      className="block bg-beige-100 hover:bg-beige-200 rounded-xl shadow-sm
+                               transition-all duration-200 hover:shadow-md"
+                    >
+                      <div className="p-6 flex items-center justify-between">
+                        <div className="flex items-center gap-6">
+                          <div className="flex flex-col">
+                            <span className="text-xl font-medium text-primary-900 capitalize">
+                              {categoryName}
+                            </span>
+                            <div className="flex items-center gap-2 mt-1">
+                              <div className="w-24 h-2 bg-beige-200 rounded-full overflow-hidden">
+                                <div
+                                  className="h-full bg-primary-600 rounded-full"
+                                  style={{ width: `${confidence}%` }}
+                                />
+                              </div>
+                              <span className="text-sm text-primary-600">
+                                {prediction.confidence}
+                              </span>
+                            </div>
+                          </div>
+                        </div>
+                        <ArrowRight className="text-primary-600" />
                       </div>
-                    </div>
-                    <ArrowRight />
+                    </Link>
                   </div>
-                </Link>
-              </div>
-            );
-          })}
-          <SaveRecognition predictions={data.predictions} />
-        </div>
-      )}
-      <div className="flex flex-col items-center justify-center">
-        <ImageUpload onImageCapture={onImageCapture} />
+                );
+              })}
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );

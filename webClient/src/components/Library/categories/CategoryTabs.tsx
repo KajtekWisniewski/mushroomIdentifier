@@ -5,7 +5,15 @@ export default function CategoryTabs() {
   const location = useLocation();
 
   return (
-    <div className="flex justify-center space-x-4 mt-4">
+    <div className="flex justify-center space-x-3 mt-4 flex-wrap items-center gap-1">
+      <Link
+        to="/search"
+        className={`px-4 py-2 rounded text-white hover:bg-primary-900 ${
+          location.pathname === '/search' ? 'bg-primary-900' : 'bg-primary-800'
+        }`}
+      >
+        Search
+      </Link>
       <Link
         to="/library"
         className={`px-4 py-2 rounded text-white hover:bg-primary-900 ${

@@ -72,7 +72,9 @@ namespace mushroomAPI.Repository
 
         public async Task<Mushroom?> GetById(int id)
         {
-            return await context.Mushrooms.FindAsync(id);
+            return await context.Mushrooms
+                .Include(m => m.Locations)
+                .FirstOrDefaultAsync(m => m.Id == id);
         }
 
         public async Task<T?> GetById<T>(int id)
@@ -82,6 +84,75 @@ namespace mushroomAPI.Repository
                 .Where(p => p.Id == id)
                 .ProjectTo<T>(mapper.ConfigurationProvider)
                 .SingleOrDefaultAsync();
+        }
+
+        public async Task<PagedList<T>> SearchMushrooms<T>(
+         string? searchTerm,
+         MushroomCategory? category = null,
+         string? season = null,
+         bool? isEdible = null,
+         int page = 1,
+         int pageSize = 10)
+        {
+            var query = context.Mushrooms.AsQueryable();
+
+            if (!string.IsNullOrWhiteSpace(searchTerm))
+            {
+                searchTerm = searchTerm.ToLower();
+                query = query.Where(m =>
+                    EF.Functions.ILike(m.Name, $"%{searchTerm}%") ||
+                    EF.Functions.ILike(m.ScientificName, $"%{searchTerm}%")
+                );
+            }
+
+            if (category.HasValue)
+            {
+                query = query.Where(m => m.Category == category.Value);
+            }
+
+            if (!string.IsNullOrWhiteSpace(season))
+            {
+                season = season.ToLower();
+                query = query.Where(m => EF.Functions.ILike(m.Season, $"%{season}%"));
+            }
+
+            if (isEdible.HasValue)
+            {
+                query = query.Where(m => m.IsEdible == isEdible.Value);
+            }
+
+            var total = await query.CountAsync();
+
+            var mushrooms = await query
+                .OrderBy(m => m.Name)
+                .Skip((page - 1) * pageSize)
+                .Take(pageSize)
+                .ToListAsync();
+
+            if (!string.IsNullOrWhiteSpace(searchTerm))
+            {
+                var commonNamesResults = (await context.Mushrooms
+                 .ToListAsync())
+                 .Where(m => m.CommonNames.Any(cn => cn.ToLower().Contains(searchTerm)))
+                 .Take(pageSize)
+                 .ToList();
+
+
+                mushrooms = mushrooms.Union(commonNamesResults)
+                    .Take(pageSize)
+                    .ToList();
+            }
+
+            var items = mushrooms.Select(m => mapper.Map<T>(m)).ToList();
+
+            return new PagedList<T>
+            {
+                Items = items,
+                CurrentPage = page,
+                PageSize = pageSize,
+                TotalCount = total,
+                TotalPages = (int)Math.Ceiling(total / (double)pageSize)
+            };
         }
 
         public async Task<bool> SafeChangesAsync()

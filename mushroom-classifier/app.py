@@ -10,7 +10,7 @@ CORS(app)
 #CORS(app, resources={r"/*": {"origins": "*", "allow_headers": "*", "methods": ["GET", "POST", "PUT", "DELETE", "OPTIONS"]}})
 
 # local path
-MODEL_PATH = "../aimodels/mushroom_classifier_model.h5"
+MODEL_PATH = "../aimodels/mushroom_classifier_model_15epochs.h5"
 
 # docker path
 # MODEL_PATH = "/app/aimodels/mushroom_classifier_model.h5"

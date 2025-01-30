@@ -26,7 +26,7 @@ export default function MushroomList() {
       {data?.pages.map((page, pageIndex) => (
         <div
           key={pageIndex}
-          className="w-full flex flex-col justify-center items-center"
+          className="w-full flex flex-col justify-center items-center animate-fade-in"
         >
           {page.items.map((mushroom) => (
             <Link to={`/mushroom/${mushroom.id}`} key={mushroom.id}>
