@@ -36,7 +36,6 @@ train_data = data_gen.flow_from_directory(
 )
 
 print(train_data.class_indices)
-input("DAWAJ ENTER ABY ROBIC DALEJ")
 
 validation_data = data_gen.flow_from_directory(
     mushrooms_dir,
@@ -68,10 +67,10 @@ model.compile(optimizer="adam", loss="categorical_crossentropy", metrics=["accur
 
 # Train the model
 print("Training model...")
-history = model.fit(train_data, validation_data=validation_data, epochs=1)
+history = model.fit(train_data, validation_data=validation_data, epochs=20)
 
 # Save the model
-model_save_path = "aiModels/mushroom_classifier_model.h5"
+model_save_path = "aiModels/mushroom_classifier_model_15epochs.h5"
 model.save(model_save_path)
 print(f"Model saved to {model_save_path}")
 

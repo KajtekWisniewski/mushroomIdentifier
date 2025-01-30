@@ -32,7 +32,7 @@ def predict_mushroom_category(image_path, model_path, class_indices):
 # Example usage (update paths as needed)
 if __name__ == "__main__":
     image_path = "testImages/test.jpg"
-    model_path = "aiModels/mushroom_classifier_model.h5"
+    model_path = "aiModels/mushroom_classifier_model_15epochs.h5"
 
     class_indices = {
         "Agaricus": 0,
