@@ -31,7 +31,13 @@ namespace mushroomAPI.Data
             modelBuilder.Entity<Mushroom>()
                .HasMany(m => m.Locations)
                .WithOne()
-               .HasForeignKey("MushroomId");
+               .HasForeignKey("MushroomId")
+               .OnDelete(DeleteBehavior.Cascade);
+
+            modelBuilder.Entity<Coordinates>()
+                .Property(c => c.Username)
+                .HasMaxLength(1000)
+                .IsRequired();
 
             modelBuilder.Entity<Mushroom>()
            .Property(m => m.CommonNames)
@@ -65,12 +71,12 @@ namespace mushroomAPI.Data
                        c => c.ToList()));
 
             modelBuilder.Entity<Coordinates>().HasData(
-                new { Id = 1, Latitude = 51.5074, Longitude = -0.1278, MushroomId = 3 },
-                new { Id = 2, Latitude = 48.8566, Longitude = 2.3522, MushroomId = 3 },
-                new { Id = 3, Latitude = 52.5200, Longitude = 13.4050, MushroomId = 2 },
-                new { Id = 4, Latitude = 45.4215, Longitude = -75.6972, MushroomId = 2 },
-                new { Id = 5, Latitude = 41.9028, Longitude = 12.4964, MushroomId = 1 },
-                new { Id = 6, Latitude = 59.9139, Longitude = 10.7522, MushroomId = 1 }
+                new { Id = 1, Latitude = 51.5074, Longitude = -0.1278, MushroomId = 3, UserId = 1, Username = "admin" },
+                new { Id = 2, Latitude = 48.8566, Longitude = 2.3522, MushroomId = 3, UserId = 1, Username = "admin" },
+                new { Id = 3, Latitude = 52.5200, Longitude = 13.4050, MushroomId = 2, UserId = 1, Username = "admin" },
+                new { Id = 4, Latitude = 45.4215, Longitude = -75.6972, MushroomId = 2, UserId = 1, Username = "admin" },
+                new { Id = 5, Latitude = 41.9028, Longitude = 12.4964, MushroomId = 1, UserId = 1, Username = "admin" },
+                new { Id = 6, Latitude = 59.9139, Longitude = 10.7522, MushroomId = 1, UserId = 1, Username = "admin" }
             );
 
             modelBuilder.Entity<Mushroom>().HasData(new List<Mushroom> {

@@ -2,6 +2,7 @@ import { useParams } from 'react-router-dom';
 import { useMushroom } from '../components/hooks/data-fetch/useMushroom';
 import MushroomEntry from '../components/Library/Entry/MushroomEntry';
 import Forum from '../components/Forum/Forum';
+import MushroomMap from '../components/Map/MushroomMap';
 
 export default function MushroomDetail() {
   const { id } = useParams();
@@ -15,10 +16,15 @@ export default function MushroomDetail() {
     <div>
       <div className="flex items-center flex-row justify-center">
         <MushroomEntry mushroom={mushroom} id={mushroom.id} />
-        <div className="h-[400px] w-[400px] bg-beige-400 m-2 rounded-2xl">
-          fake map component
+        <div className="h-[456px] w-[456px] bg-beige-400 m-2 rounded-2xl">
+          <MushroomMap
+            mushroomId={Number(id)}
+            locations={mushroom.locations}
+            mushroomName={mushroom.name}
+          ></MushroomMap>
         </div>
       </div>
+
       <div className="flex m-4 bg-beige-400 rounded-2xl p-4">
         <Forum mushroomName={mushroom.name} mushroomId={mushroom.id} />
       </div>

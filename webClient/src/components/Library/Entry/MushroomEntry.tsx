@@ -64,17 +64,11 @@ const MushroomEntry = ({ mushroom, id, listView }: MushroomEntryProps) => {
 
           {locations.length > 0 && (
             <section className="locations">
-              <h2 className="font-bold">Known Locations</h2>
-              {!listView ? (
-                <ul>
-                  {locations.map((location) => (
-                    <li key={`${id}-location-${location.id}`}>
-                      Lat: {location.latitude}, Long: {location.longitude}
-                    </li>
-                  ))}
-                </ul>
-              ) : (
-                <span>Click to view location details</span>
+              {listView && (
+                <>
+                  <h2 className="font-bold">Known Locations</h2>
+                  <span>Click to view location details</span>
+                </>
               )}
             </section>
           )}

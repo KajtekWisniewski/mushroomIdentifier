@@ -72,7 +72,9 @@ namespace mushroomAPI.Repository
 
         public async Task<Mushroom?> GetById(int id)
         {
-            return await context.Mushrooms.FindAsync(id);
+            return await context.Mushrooms
+                .Include(m => m.Locations)
+                .FirstOrDefaultAsync(m => m.Id == id);
         }
 
         public async Task<T?> GetById<T>(int id)

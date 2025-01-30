@@ -2,10 +2,12 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using mushroomAPI.DTOs;
+using mushroomAPI.DTOs.Mushroom.Coordinates;
 using mushroomAPI.DTOs.Mushroom.Entries;
 using mushroomAPI.DTOs.Mushroom.Predictions;
 using mushroomAPI.Entities;
 using mushroomAPI.Repository.Contracts;
+using System.Security.Claims;
 
 namespace mushroomAPI.Controllers
 {
@@ -80,12 +82,42 @@ namespace mushroomAPI.Controllers
         }
 
         [Authorize]
+        [HttpDelete("{mushroomId}/coordinates/{locationId}")]
+        public async Task<ActionResult> DeleteCoordinates(int mushroomId, int locationId)
+        {
+            var mushroom = await _repository.GetById(mushroomId);
+            if (mushroom == null) return NotFound();
+
+            var location = mushroom.Locations.FirstOrDefault(l => l.Id == locationId);
+            if (location == null) return NotFound();
+
+            var userId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier)?.Value!);
+            if (location.UserId != userId && !User.IsInRole("Admin"))
+                return Forbid();
+
+            mushroom.Locations.Remove(location);
+            return await _repository.SafeChangesAsync() ? NoContent() : BadRequest();
+        }
+
+        [Authorize]
         [HttpPost("{id}/coordinates")]
-        public async Task<ActionResult> AddCoordinates(int id, Coordinates coordinates)
+        public async Task<ActionResult> AddCoordinates(int id, SaveCoordinatesDTO coordinates)
         {
             var mushroom = await _repository.GetById(id);
             if (mushroom == null) return NotFound();
-            mushroom.Locations.Add(coordinates);
+
+            var userId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier)?.Value!);
+            var username = User.FindFirst(ClaimTypes.Name)?.Value!;
+
+            var location = new Coordinates
+            {
+                Latitude = coordinates.Latitude,
+                Longitude = coordinates.Longitude,
+                UserId = userId,
+                Username = username
+            };
+
+            mushroom.Locations.Add(location);
             return await _repository.SafeChangesAsync() ? NoContent() : BadRequest();
         }
 

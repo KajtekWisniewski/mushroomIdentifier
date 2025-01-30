@@ -14,6 +14,13 @@ export interface Coordinates {
   id: number;
   latitude: number;
   longitude: number;
+  userId: number;
+  username: string;
+}
+
+export interface SaveCoordinatesDTO {
+  latitude: number;
+  longitude: number;
 }
 
 export interface MushroomPrediction {
