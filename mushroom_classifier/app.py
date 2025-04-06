@@ -7,10 +7,11 @@ from flask_cors import CORS
 
 app = Flask(__name__)
 CORS(app)
-#CORS(app, resources={r"/*": {"origins": "*", "allow_headers": "*", "methods": ["GET", "POST", "PUT", "DELETE", "OPTIONS"]}})
+# CORS(app, resources={r"/*": {"origins": "*", "allow_headers": "*", "methods": ["GET", "POST", "PUT", "DELETE", "OPTIONS"]}})
 
 # local path
-MODEL_PATH = "../aimodels/mushroom_classifier_model_15epochs.h5"
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+MODEL_PATH = os.path.join(BASE_DIR, "../aiModels/mushroom_classifier_model.h5")
 
 # docker path
 # MODEL_PATH = "/app/aimodels/mushroom_classifier_model.h5"
@@ -77,6 +78,11 @@ def predict():
         return jsonify({"error": str(e)}), 500
     finally:
         os.remove(image_path)
+
+
+@app.route("/health", methods=["GET"])
+def health():
+    return jsonify({"status": "ok"}), 200
 
 
 if __name__ == "__main__":
