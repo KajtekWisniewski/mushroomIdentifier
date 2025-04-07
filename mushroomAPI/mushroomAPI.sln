@@ -5,6 +5,10 @@ VisualStudioVersion = 17.12.35521.163 d17.12
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "mushroomAPI", "mushroomAPI\mushroomAPI.csproj", "{04FDCFB2-51FE-4054-8318-6C9C919817EF}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "mushroomAPI.UnitTests", "mushroomAPI.UnitTests\mushroomAPI.UnitTests.csproj", "{EEF34372-342F-4F6E-B24A-A2496E0FA1F6}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "mushroomAPI.ApiTests", "mushroomAPI.ApiTests\mushroomAPI.ApiTests.csproj", "{498209CD-76C8-4320-84BD-5E659AFDCF20}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -15,6 +19,14 @@ Global
 		{04FDCFB2-51FE-4054-8318-6C9C919817EF}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{04FDCFB2-51FE-4054-8318-6C9C919817EF}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{04FDCFB2-51FE-4054-8318-6C9C919817EF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{EEF34372-342F-4F6E-B24A-A2496E0FA1F6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{EEF34372-342F-4F6E-B24A-A2496E0FA1F6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{EEF34372-342F-4F6E-B24A-A2496E0FA1F6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{EEF34372-342F-4F6E-B24A-A2496E0FA1F6}.Release|Any CPU.Build.0 = Release|Any CPU
+		{498209CD-76C8-4320-84BD-5E659AFDCF20}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{498209CD-76C8-4320-84BD-5E659AFDCF20}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{498209CD-76C8-4320-84BD-5E659AFDCF20}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{498209CD-76C8-4320-84BD-5E659AFDCF20}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

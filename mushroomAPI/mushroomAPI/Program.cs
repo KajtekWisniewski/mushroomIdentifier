@@ -52,10 +52,7 @@ builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<IForumRepository, ForumRepository>();
 builder.Services.AddAutoMapper(typeof(AutoMapperProfiles));
 builder.Services.AddCors();
-builder.Services.AddDbContext<ApplicationDbContext>(options =>
-{
-    options.UseNpgsql(builder.Configuration.GetConnectionString("Postgres"));
-});
+builder.Services.AddAppDbContext(builder.Configuration, builder.Environment);
 
 builder.Services.AddAuthentication(options =>
 {
@@ -86,7 +83,10 @@ using (var scope = app.Services.CreateScope())
 
     try
     {
-        context.Database.Migrate();
+        if (context.Database.IsRelational())
+        {
+            context.Database.Migrate();
+        }
     }
     catch (Exception ex)
     {
@@ -112,3 +112,5 @@ app.UseAuthentication();
 app.UseAuthorization();
 app.MapControllers();
 app.Run();
+
+public partial class Program { }
