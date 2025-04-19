@@ -6,6 +6,7 @@ import { Home, Library, User, LogIn } from 'lucide-react';
 import clsx from 'clsx';
 import Logout from '../Auth/Logout';
 import AuthModal from '../Auth/Modal/AuthModal';
+import { RecogniserHealthStatus } from './RecogniserHealthStatus';
 
 export default function NavigationBar() {
   const { user } = useSelector((state: RootState) => state.auth);
@@ -55,6 +56,7 @@ export default function NavigationBar() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-16">
             <div className="flex items-center space-x-2">
+              <RecogniserHealthStatus></RecogniserHealthStatus>
               <NavLink to="/">
                 <Home size={18} />
                 <span className="hidden sm:inline">Home</span>
