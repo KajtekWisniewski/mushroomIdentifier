@@ -1,13 +1,17 @@
 import { useMutation } from '@tanstack/react-query';
 import { Link } from 'react-router-dom';
-import { ArrowRight, Upload, AlertCircle, CheckCircle2 } from 'lucide-react';
+import { ArrowRight, Upload, AlertCircle, CheckCircle2, AlertTriangle } from 'lucide-react';
 import { useEffect } from 'react';
 import { MushroomPrediction, MushroomCategory } from '../contracts/mushroom/mushroom';
 import ImageUpload from '../components/Home/ImageUpload';
 import SaveRecognition from '../components/Home/SaveRecogniton';
 import httpClient from '../utils/httpClient';
+import { useRecogniserHealth } from '../components/hooks/status-fetch/useRecogniserHealth';
 
 export default function Home() {
+
+  const { isError } = useRecogniserHealth();
+
   const uploadMutation = useMutation({
     mutationFn: async (file: File) => {
       const formData = new FormData();
@@ -101,7 +105,13 @@ export default function Home() {
         </div>
 
         <div className="max-w-2xl mx-auto mb-12 bg-beige-500 p-8 rounded-2xl shadow-lg">
-          <ImageUpload onImageCapture={onImageCapture} />
+          {isError ? 
+            <div className='flex flex-row gap-4 items-center justify-center'>
+              <AlertTriangle className="text-red-500 animate-pulse" size={80}/> 
+              <div>Recognition service disconnected</div>
+            </div> 
+            :
+            <ImageUpload onImageCapture={onImageCapture} /> }
         </div>
 
         {data && (

@@ -59,7 +59,7 @@ const UserLocationsMap = () => {
   return (
     <div className={containerClasses}>
       <div className="relative h-full">
-        <div className="absolute top-4 right-4 z-[1000] flex gap-2">
+        <div className="absolute top-4 right-4 z-[49] flex gap-2">
           <button
             onClick={toggleFullscreen}
             className="bg-white p-2 rounded-lg shadow-md hover:bg-gray-100"
