@@ -24,7 +24,18 @@ batch_size = 32
 ImageFile.LOAD_TRUNCATED_IMAGES = True
 
 print("Preparing dataset...")
-data_gen = ImageDataGenerator(rescale=1.0 / 255, validation_split=0.2)
+data_gen = ImageDataGenerator(
+    rescale=1.0 / 255,
+    validation_split=0.2,
+    rotation_range=15,
+    width_shift_range=0.05,
+    height_shift_range=0.05,
+    shear_range=0.05,
+    zoom_range=0.1,
+    horizontal_flip=True,
+    fill_mode="nearest",
+)
+
 
 train_data = data_gen.flow_from_directory(
     mushrooms_dir,
@@ -55,6 +66,8 @@ model = Sequential(
         MaxPooling2D(2, 2),
         Conv2D(128, (3, 3), activation="relu"),
         MaxPooling2D(2, 2),
+        Conv2D(128, (3, 3), activation="relu"),
+        MaxPooling2D(2, 2),
         Flatten(),
         Dense(128, activation="relu"),
         Dropout(0.5),
@@ -70,7 +83,7 @@ print("Training model...")
 history = model.fit(train_data, validation_data=validation_data, epochs=20)
 
 # Save the model
-model_save_path = "aiModels/mushroom_classifier_model_15epochs.h5"
+model_save_path = "aiModels/mushroom_classifier_model_20epochs.h5"
 model.save(model_save_path)
 print(f"Model saved to {model_save_path}")
 
