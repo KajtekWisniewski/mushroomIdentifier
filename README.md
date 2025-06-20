@@ -21,4 +21,4 @@ To run tests manually -> `cd mushroomAPI/`, from there run:
 
 `dotnet test mushroomAPI.UnitTests/mushroomAPI.UnitTests.csproj`
 
-To run the tests for the AI backend -> `cd tests`
+To run the tests for the AI backend -> `python -m pytest tests/ -v`

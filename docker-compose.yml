@@ -25,6 +25,15 @@ services:
       - ASPNETCORE_ENVIRONMENT=Development
       - ConnectionStrings__Postgres=Host=backend-db;Port=5433;Database=api;Username=api;Password=password
 
+  frontend:
+    build: ./webClient
+    ports:
+      - '5173:5173'
+    networks:
+      - backend-net
+    depends_on:
+      - backend
+
 volumes:
   backend-db-data:
 
