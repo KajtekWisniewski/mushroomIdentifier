@@ -16,8 +16,8 @@ MODEL_PATH = os.path.join(BASE_DIR, "mushroom_classifier_model_30epochs_final_pa
 
 # docker path
 # MODEL_PATH = "/app/aimodels/mushroom_classifier_model.h5"
-model = tf.keras.models.load_model(MODEL_PATH)
-
+# model = tf.keras.models.load_model(MODEL_PATH)
+model = None
 
 class_indices = {
     "Agaricus": 0,
@@ -33,6 +33,12 @@ class_indices = {
 class_labels = {v: k for k, v in class_indices.items()}
 
 
+def load_model():
+    global model
+    if model is None:
+        model = tf.keras.models.load_model(MODEL_PATH)
+
+
 def preprocess_image(image_path, img_height=224, img_width=244):
     img = load_img(image_path, target_size=(img_height, img_width))
     img_array = img_to_array(img)
@@ -43,6 +49,7 @@ def preprocess_image(image_path, img_height=224, img_width=244):
 
 # Predict function
 def predict_mushroom_category(image_path):
+    load_model()
     img_array = preprocess_image(image_path, 224, 244)
     predictions = model.predict(img_array)[0]
 
