@@ -11,7 +11,8 @@ CORS(app)
 
 # local path
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-MODEL_PATH = os.path.join(BASE_DIR, "../aiModels/mushroom_classifier_model.h5")
+MODEL_PATH = os.path.join(BASE_DIR, "mushroom_classifier_model_30epochs_final_paper.h5")
+
 
 # docker path
 # MODEL_PATH = "/app/aimodels/mushroom_classifier_model.h5"
@@ -32,7 +33,7 @@ class_indices = {
 class_labels = {v: k for k, v in class_indices.items()}
 
 
-def preprocess_image(image_path, img_height, img_width):
+def preprocess_image(image_path, img_height=224, img_width=244):
     img = load_img(image_path, target_size=(img_height, img_width))
     img_array = img_to_array(img)
     img_array = np.expand_dims(img_array, axis=0)
@@ -42,7 +43,7 @@ def preprocess_image(image_path, img_height, img_width):
 
 # Predict function
 def predict_mushroom_category(image_path):
-    img_array = preprocess_image(image_path, 150, 150)
+    img_array = preprocess_image(image_path, 224, 244)
     predictions = model.predict(img_array)[0]
 
     # Get the top 5 predictions
@@ -86,4 +87,4 @@ def health():
 
 
 if __name__ == "__main__":
-    app.run(debug=False)
+    app.run(debug=False, host="0.0.0.0", port=5000)
