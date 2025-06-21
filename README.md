@@ -2,7 +2,7 @@
 
 ## Running the app
 
-To run the whole up you have build docker containers in the following process:
+To run the whole up you have build docker containers from the root of the project in the following process:
 
 1. Build the AI backend:
    `docker build -t mushroom-api -f mushroom_classifier/Dockerfile .`
@@ -21,4 +21,4 @@ To run tests manually -> `cd mushroomAPI/`, from there run:
 
 `dotnet test mushroomAPI.UnitTests/mushroomAPI.UnitTests.csproj`
 
-To run the tests for the AI backend -> `python -m pytest tests/ -v`
+To run the tests for the AI backend run the command from the root of the project-> `python -m pytest tests/ -v`
