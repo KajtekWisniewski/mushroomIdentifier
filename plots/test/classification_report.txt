@@ -1,0 +1,15 @@
+              precision    recall  f1-score   support
+
+    Agaricus       0.00      0.00      0.00        70
+     Amanita       0.13      0.19      0.15       150
+     Boletus       0.14      0.13      0.13       214
+ Cortinarius       0.11      0.10      0.10       167
+    Entoloma       0.06      0.07      0.06        72
+   Hygrocybe       0.02      0.03      0.03        63
+   Lactarius       0.23      0.23      0.23       312
+     Russula       0.16      0.16      0.16       229
+     Suillus       0.06      0.03      0.04        62
+
+    accuracy                           0.14      1339
+   macro avg       0.10      0.10      0.10      1339
+weighted avg       0.14      0.14      0.14      1339

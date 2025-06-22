@@ -18,7 +18,7 @@ def predict_mushroom_category(image_path, model_path, class_indices):
     model = tf.keras.models.load_model(model_path)
 
     # Preprocess the input image
-    img_array = preprocess_image(image_path, 150, 150)
+    img_array = preprocess_image(image_path, 224, 244)
 
     # Make prediction
     predictions = model.predict(img_array)[0]

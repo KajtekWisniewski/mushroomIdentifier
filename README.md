@@ -1,17 +1,24 @@
 # mushroomIdentifier
 
-## running the app
+## Running the app
 
-run the app with docker:
+To run the whole up you have build docker containers from the root of the project in the following process:
 
-from main folder (mushroomIdentifier)
+1. Build the AI backend:
+   `docker build -t mushroom-api -f mushroom_classifier/Dockerfile .`
+2. Run the AI backend contaiener:
+   `docker run -d -p 5000:5000 mushroom-api`
+3. **Optional** Check the status of the AI backend:
+   `curl http://localhost:5000/health`
+4. Run the app with docker from main folder (mushroomIdentifier):
+   `docker-compose up --build`
 
-docker-compose up --build
+## Running tests
 
-## running tests
+To run tests manually -> `cd mushroomAPI/`, from there run:
 
-to run tests manually -> cd /mushroomAPI, from there run:
+`dotnet test mushroomAPI.ApiTests/mushroomAPI.ApiTests.csproj`
 
-dotnet test mushroomAPI.ApiTests/mushroomAPI.ApiTests.csproj
-dotnet test mushroomAPI.UnitTests/mushroomAPI.UnitTests.csproj
+`dotnet test mushroomAPI.UnitTests/mushroomAPI.UnitTests.csproj`
 
+To run the tests for the AI backend run the command from the root of the project-> `python -m pytest tests/ -v`

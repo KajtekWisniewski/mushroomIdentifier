@@ -4,6 +4,12 @@ Flask-Cors==4.0.1
 tensorflow==2.16.1
 numpy==1.26.3
 pillow==11.1.0
+opencv-python
+matplotlib
+pandas
+seaborn
+scikit-learn
+kagglehub
 gunicorn==20.1.0
 pytest
 pytest-mock

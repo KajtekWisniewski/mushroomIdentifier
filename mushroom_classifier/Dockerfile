@@ -7,11 +7,13 @@ RUN apt-get update && apt-get install -y \
 
 WORKDIR /app
 
-COPY requirements.txt .
+COPY mushroom_classifier/requirements.txt .
 
 RUN pip install --no-cache-dir -r requirements.txt
 
-COPY . .
+COPY mushroom_classifier/ .
+
+COPY ../aiModels/mushroom_classifier_model_30epochs_final_paper.h5 /app/
 
 RUN mkdir -p uploads
 
