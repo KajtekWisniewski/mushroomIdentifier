@@ -13,6 +13,8 @@ To run the whole up you have build docker containers from the root of the projec
 4. Run the app with docker from main folder (mushroomIdentifier):
    `docker-compose up --build`
 
+The app will be available at localhost:5173
+
 ## Running tests
 
 To run tests manually -> `cd mushroomAPI/`, from there run:
