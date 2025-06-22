@@ -1,8 +1,19 @@
 # mushroomIdentifier
 
+## przy pobraniu z eUczelnia
+**mushroomIdentifier-main** zawiera w sobie cały kod
+
+**mushroomIdentifier-model-** zawierają w sobie modele ai. należy wyodrębnić pliki ze skompresowanego folderu i umieścić je w folderze ***mushroomIdentifier-main/aiModels***
+
+## lub pobranie bezpośredniu z repozytorium / or download directly from repository
+
+[link to repository on github](https://github.com/KajtekWisniewski/mushroomIdentifier)
+
+From here it is possible to download branch -main as a zip. Extract it to a folder and then proceed with the following instructions:
+
 ## Running the app
 
-To run the whole up you have build docker containers from the root of the project in the following process:
+To run the whole up you have to build docker containers from the root of the project in the following process:
 
 1. Build the AI backend:
    `docker build -t mushroom-api -f mushroom_classifier/Dockerfile .`
